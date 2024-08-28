@@ -19,6 +19,7 @@ func main() {
 
 	// Routes
 	r.Get("/", handlers.HomeHandler)
+	r.Post("/convert", handlers.ConvertImageHandler)
 
 	// Start server
 	log.Println("Server running on: http://localhost:8080")
