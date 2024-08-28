@@ -6,19 +6,32 @@ templ Base(title string) {
 		<head>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+            <!-- Title -->
 			<title>{ title }</title>
+
+            <!-- CSS Theme -->
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+            
+            <!-- HTMX -->
 			<script src="https://unpkg.com/htmx.org@2.0.2" integrity="sha384-Y7hw+L/jvKeWIRRkqWYfPcvVxHzVzn5REgzbawhxAuQGwX1XWe70vji+VSeHOThJ" crossorigin="anonymous"></script>
 		</head>
 		<body>
 			<header>
-				<h1>This is a Layout</h1>
+                <h2>ASCII Converter</h2>
 			</header>
+            <hr>
 			<main>
-				{ children... }
+				<section>
+                    { children... }
+                </section>
 			</main>
             <footer>
-                <p>Twitter</p>
-                <p>GitHub</p>
+                <p>Made by David Vivar Bogónez, aka: Aster🌟</p>
+                <ul>
+                    <li><a href="https://twitter.com/07devAdvb">Twitter</a></li>
+                    <li><a href="https://github.com/07devAdvb/ascii-converter">GitHub</a></li>
+                </ul>
             </footer>
 		</body>
 	</html>

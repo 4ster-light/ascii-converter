@@ -6,5 +6,5 @@ import (
 )
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
-	templates.Home("ASCII Converter").Render(r.Context(), w)
+	templates.Home("🏠 Home").Render(r.Context(), w)
 }
