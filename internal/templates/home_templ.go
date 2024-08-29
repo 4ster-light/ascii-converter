@@ -46,6 +46,10 @@ func Home(title string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <div id=\"output\"></div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 			return templ_7745c5c3_Err
 		})
 		templ_7745c5c3_Err = Base(title).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
@@ -74,7 +78,7 @@ func imageForm() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/convert\" method=\"post\" enctype=\"multipart/form-data\" class=\"form\"><div class=\"form-body\"><div><label for=\"image\">Upload Image:</label> <input type=\"file\" id=\"image\" name=\"image\" accept=\"image/*\" required></div><div><p>Color:</p><input type=\"radio\" id=\"color\" name=\"color_option\" value=\"color\" checked> <label for=\"color\">Color</label> <input type=\"radio\" id=\"bw\" name=\"color_option\" value=\"bw\"> <label for=\"bw\">Black & White</label></div><div><p>Output Type:</p><input type=\"radio\" id=\"text\" name=\"output_type\" value=\"text\" checked> <label for=\"text\">Text</label> <input type=\"radio\" id=\"image\" name=\"output_type\" value=\"image\"> <label for=\"image\">Image</label></div></div><button type=\"submit\" class=\"submit\">Generate ASCII</button></form>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form hx-post=\"/convert\" hx-target=\"#output\" hx-encoding=\"multipart/form-data\" class=\"form\"><div class=\"form-body\"><div><label for=\"image\">Upload Image:</label> <input type=\"file\" id=\"image\" name=\"image\" accept=\"image/*\" required></div><div><p>Color:</p><input type=\"radio\" id=\"color\" name=\"color_option\" value=\"color\" checked> <label for=\"color\">Color</label> <input type=\"radio\" id=\"bw\" name=\"color_option\" value=\"bw\"> <label for=\"bw\">Black & White</label></div><div><p>Output Type:</p><input type=\"radio\" id=\"text\" name=\"output_type\" value=\"text\" checked> <label for=\"text\">Text</label> <input type=\"radio\" id=\"image\" name=\"output_type\" value=\"image\"> <label for=\"image\">Image</label></div></div><button type=\"submit\" class=\"submit\">Generate ASCII</button></form>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

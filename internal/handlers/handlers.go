@@ -3,6 +3,9 @@ package handlers
 import (
 	"ascii-converter/internal/ascii"
 	"ascii-converter/internal/templates"
+	"encoding/base64"
+	"fmt"
+	"html"
 
 	"image/png"
 	"io"
@@ -52,26 +55,18 @@ func ConvertImageHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Return the ASCII text or the image
 	if outputType == "text" {
-		w.Header().Set("Content-Type", "text/plain")
-		if asciiText, ok := asciiResult.(string); ok {
-			w.Write([]byte(asciiText))
-		} else {
-			http.Error(w, "Unexpected result type for text output", http.StatusInternalServerError)
-		}
+		fmt.Fprintf(w, "<pre>%s</pre>", html.EscapeString(asciiResult.(string)))
 	} else {
-		// Convert the ASCII to an image
-		if asciiText, ok := asciiResult.(string); ok {
-			asciiImage, err := ascii.ConvertAsciiToImage(asciiText)
-			if err != nil {
-				http.Error(w, "Unable to convert the ASCII to an image", http.StatusInternalServerError)
-				return
-			}
-
-			// Write the image
-			w.Header().Set("Content-Type", "image/png")
-			png.Encode(w, asciiImage)
-		} else {
-			http.Error(w, "Unexpected result type for image output", http.StatusInternalServerError)
+		asciiImage, err := ascii.ConvertAsciiToImage(asciiResult.(string))
+		if err != nil {
+			http.Error(w, "Unable to convert ASCII to image", http.StatusInternalServerError)
+			return
 		}
+
+		fmt.Fprintf(w, "<img src='data:image/png;base64,")
+		pngEncoder := base64.NewEncoder(base64.StdEncoding, w)
+		png.Encode(pngEncoder, asciiImage)
+		pngEncoder.Close()
+		fmt.Fprintf(w, "' alt='ASCII Art'>")
 	}
 }

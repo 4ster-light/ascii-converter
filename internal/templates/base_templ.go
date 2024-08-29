@@ -39,7 +39,15 @@ func Base(title string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</title><!-- CSS Theme --><link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/water.css@2/out/water.css\"><!-- HTMX\r\n\t\t\t\r\n            <script src=\"https://unpkg.com/htmx.org@2.0.2\" integrity=\"sha384-Y7hw+L/jvKeWIRRkqWYfPcvVxHzVzn5REgzbawhxAuQGwX1XWe70vji+VSeHOThJ\" crossorigin=\"anonymous\"></script>\r\n            \r\n            --><style>\r\n                .title {\r\n                    text-align: center;\r\n                    font-family: monospace;\r\n                }\r\n\r\n                .form {\r\n                    display: flex;\r\n                    flex-direction: column;\r\n                    align-items: center;\r\n                    justify-content: center;\r\n                    border: 1px solid #ccc;\r\n                    padding: 20px;\r\n                    border-radius: 5px;\r\n                }\r\n                .form-body {\r\n                    margin-bottom: 40px;\r\n                }\r\n                .submit {\r\n                    width: 100%;\r\n                }\r\n\r\n                .footer {\r\n                    display: flex;\r\n                    flex-direction: row;\r\n                    justify-content: space-between;\r\n                }\r\n                .footer-links {\r\n                    list-style: none;\r\n                    display: flex;\r\n                    flex-direction: row;\r\n                    gap: 10px;\r\n                }\r\n            </style></head><body><header><h1 class=\"title\">🎨 ASCII Converter 🎨</h1></header><hr><main><section>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</title>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = Styles().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!-- HTMX --><script src=\"https://unpkg.com/htmx.org@2.0.2\" integrity=\"sha384-Y7hw+L/jvKeWIRRkqWYfPcvVxHzVzn5REgzbawhxAuQGwX1XWe70vji+VSeHOThJ\" crossorigin=\"anonymous\"></script></head><body><header><h1 class=\"title\">🎨 ASCII Converter 🎨</h1></header><hr><main>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -47,7 +55,7 @@ func Base(title string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</section></main><footer class=\"footer\"><p>Made by David Vivar Bogónez, aka: Aster🌟</p><ul class=\"footer-links\"><li><a href=\"https://twitter.com/07devAdvb\">𝕏 - Twitter</a></li>| <li><a href=\"https://github.com/07devAdvb/ascii-converter\">GitHub</a></li></ul></footer></body></html>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</main><footer class=\"footer\"><p>Made by David Vivar Bogónez, aka: Aster🌟</p><ul class=\"footer-links\"><li><a href=\"https://twitter.com/07devAdvb\">𝕏 - Twitter</a></li>| <li><a href=\"https://github.com/07devAdvb/ascii-converter\">GitHub</a></li></ul></footer></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

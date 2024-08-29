@@ -10,49 +10,10 @@ templ Base(title string) {
             <!-- Title -->
 			<title>{ title }</title>
 
-            <!-- CSS Theme -->
-            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+            @Styles()
             
-            <!-- HTMX
-			
+            <!-- HTMX -->
             <script src="https://unpkg.com/htmx.org@2.0.2" integrity="sha384-Y7hw+L/jvKeWIRRkqWYfPcvVxHzVzn5REgzbawhxAuQGwX1XWe70vji+VSeHOThJ" crossorigin="anonymous"></script>
-            
-            -->
-
-            <style>
-                .title {
-                    text-align: center;
-                    font-family: monospace;
-                }
-
-                .form {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    justify-content: center;
-                    border: 1px solid #ccc;
-                    padding: 20px;
-                    border-radius: 5px;
-                }
-                .form-body {
-                    margin-bottom: 40px;
-                }
-                .submit {
-                    width: 100%;
-                }
-
-                .footer {
-                    display: flex;
-                    flex-direction: row;
-                    justify-content: space-between;
-                }
-                .footer-links {
-                    list-style: none;
-                    display: flex;
-                    flex-direction: row;
-                    gap: 10px;
-                }
-            </style>
 		</head>
 		<body>
 			<header>
@@ -60,10 +21,8 @@ templ Base(title string) {
 			</header>
             <hr>
 			<main>
-				<section>
-                    { children... }
-                </section>
-			</main>
+                { children... }
+            </main>
             <footer class="footer">
                 <p>Made by David Vivar Bogónez, aka: Aster🌟</p>
                 <ul class="footer-links">

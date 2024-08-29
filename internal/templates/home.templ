@@ -7,11 +7,12 @@ templ Home(title string) {
 		<p>It allows you to upload an image and choose wether you want to convert it to text or to an image format.</p>
 		<p>You can also choose wether you want to convert the image to color or to black and white.</p>
 		@imageForm()
+        <div id="output"></div>
 	}
 }
 
 templ imageForm() {
-	<form action="/convert" method="post" enctype="multipart/form-data" class="form">
+	<form hx-post="/convert" hx-target="#output" hx-encoding="multipart/form-data" class="form">
 		<div class="form-body">
 			<div>
 				<label for="image">Upload Image:</label>
