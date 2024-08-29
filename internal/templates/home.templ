@@ -2,37 +2,36 @@ package templates
 
 templ Home(title string) {
 	@Base(title) {
-		<h1>Welcome to the ASCII converter</h1>
-        <p></p>
-		<p>This is a simple tool to convert images to ASCII art.</p>
-        <p>It allows you to upload an image and choose wether you want to convert it to text or to an image format.</p>
-        <p>You can also choose wether you want to convert the image to color or to black and white.</p>
+		<h1>Welcome to ASCII converter</h1>
+		<p>This is a simple website to convert images to ASCII art.</p>
+		<p>It allows you to upload an image and choose wether you want to convert it to text or to an image format.</p>
+		<p>You can also choose wether you want to convert the image to color or to black and white.</p>
 		@imageForm()
 	}
 }
 
 templ imageForm() {
-	<form action="/convert" method="post" enctype="multipart/form-data">
-		<div>
-			<label for="image">Upload Image:</label>
-			<input type="file" id="image" name="image" accept="image/*" required/>
+	<form action="/convert" method="post" enctype="multipart/form-data" class="form">
+		<div class="form-body">
+			<div>
+				<label for="image">Upload Image:</label>
+				<input type="file" id="image" name="image" accept="image/*" required/>
+			</div>
+			<div>
+				<p>Color:</p>
+				<input type="radio" id="color" name="color_option" value="color" checked/>
+				<label for="color">Color</label>
+				<input type="radio" id="bw" name="color_option" value="bw"/>
+				<label for="bw">Black & White</label>
+			</div>
+			<div>
+				<p>Output Type:</p>
+				<input type="radio" id="text" name="output_type" value="text" checked/>
+				<label for="text">Text</label>
+				<input type="radio" id="image" name="output_type" value="image"/>
+				<label for="image">Image</label>
+			</div>
 		</div>
-		<div>
-			<p>Color:</p>
-			<input type="radio" id="color" name="color_option" value="color" checked/>
-			<label for="color">Color</label>
-			<input type="radio" id="bw" name="color_option" value="bw"/>
-			<label for="bw">Black & White</label>
-		</div>
-		<div>
-			<p>Output Type:</p>
-			<input type="radio" id="text" name="output_type" value="text" checked/>
-			<label for="text">Text</label>
-			<input type="radio" id="image" name="output_type" value="image"/>
-			<label for="image">Image</label>
-		</div>
-		<div>
-			<button type="submit">Generate ASCII</button>
-		</div>
+		<button type="submit" class="submit">Generate ASCII</button>
 	</form>
 }

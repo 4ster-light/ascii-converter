@@ -22,12 +22,41 @@ templ Base(title string) {
             <style>
                 .title {
                     text-align: center;
+                    font-family: monospace;
+                }
+
+                .form {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    border: 1px solid #ccc;
+                    padding: 20px;
+                    border-radius: 5px;
+                }
+                .form-body {
+                    margin-bottom: 40px;
+                }
+                .submit {
+                    width: 100%;
+                }
+
+                .footer {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: space-between;
+                }
+                .footer-links {
+                    list-style: none;
+                    display: flex;
+                    flex-direction: row;
+                    gap: 10px;
                 }
             </style>
 		</head>
 		<body>
 			<header>
-                <h2 class="title">🎨 ASCII Converter 🎨</h2>
+                <h1 class="title">🎨 ASCII Converter 🎨</h1>
 			</header>
             <hr>
 			<main>
@@ -35,10 +64,10 @@ templ Base(title string) {
                     { children... }
                 </section>
 			</main>
-            <footer>
+            <footer class="footer">
                 <p>Made by David Vivar Bogónez, aka: Aster🌟</p>
-                <ul>
-                    <li><a href="https://twitter.com/07devAdvb">Twitter</a></li>
+                <ul class="footer-links">
+                    <li><a href="https://twitter.com/07devAdvb">𝕏 - Twitter</a></li> | 
                     <li><a href="https://github.com/07devAdvb/ascii-converter">GitHub</a></li>
                 </ul>
             </footer>

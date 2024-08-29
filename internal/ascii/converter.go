@@ -1,8 +1,10 @@
 package ascii
 
-import "image"
+import (
+	"image"
+)
 
-func ConvertImage(imageBytes []byte, colorOption string, outputType string) (string, error) {
+func ConvertImage(imageBytes []byte, formColorOption string, formOutputType string) (string, error) {
 	return "", nil
 }
 
