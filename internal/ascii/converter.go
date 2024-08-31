@@ -2,47 +2,40 @@ package ascii
 
 import (
 	"bytes"
-	"errors"
+	"fmt"
 	"image"
 	"image/color"
 	"strings"
 
 	"github.com/nfnt/resize"
-	"golang.org/x/image/font"
-	"golang.org/x/image/font/basicfont"
-	"golang.org/x/image/math/fixed"
 )
 
-var (
-	errInvalidOptions        = errors.New("invalid options")
-	errUnsupportedOutputType = errors.New("unsupported output type")
-)
+// ASCII character set for grayscale mapping (from darkest to lightest)
+var asciiChars = []byte("$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,\"^`'. ")
 
-func ConvertImage(imageBytes []byte, formColorOption string, formOutputType string) (interface{}, error) {
+// ConvertImage converts an image to ASCII art
+func ConvertImage(imageBytes []byte, colorOption string) (string, error) {
 	// Decode the image
 	img, _, err := image.Decode(bytes.NewReader(imageBytes))
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	// Resize the image to a smaller size for ASCII conversion
+	// Resize the image to a width of 80 pixels, maintaining aspect ratio
 	img = resize.Resize(80, 0, img, resize.Lanczos3)
 
-	// Convert to grayscale if black and white option is selected
-	if formColorOption == "bw" {
-		img = convertToGrayscale(img)
-	}
-
-	switch formOutputType {
-	case "text":
-		return imageToAscii(img), nil
-	case "image":
-		return ConvertAsciiToImage(imageToAscii(img))
+	// Generate and return ASCII art based on the color option
+	switch colorOption {
+	case "bw":
+		return imageToAscii(convertToGrayscale(img)), nil
+	case "color":
+		return imageToColorAscii(img), nil
 	default:
-		return nil, errUnsupportedOutputType
+		return imageToAscii(img), nil // Default to grayscale ASCII
 	}
 }
 
+// convertToGrayscale converts a color image to grayscale
 func convertToGrayscale(img image.Image) *image.Gray {
 	bounds := img.Bounds()
 	grayImg := image.NewGray(bounds)
@@ -54,43 +47,47 @@ func convertToGrayscale(img image.Image) *image.Gray {
 	return grayImg
 }
 
+// imageToAscii converts an image to grayscale ASCII art
 func imageToAscii(img image.Image) string {
 	bounds := img.Bounds()
-	ascii := ""
+	var sb strings.Builder
+	sb.Grow((bounds.Dx() + 1) * bounds.Dy()) // Pre-allocate space for efficiency, including newlines
+
 	for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
 		for x := bounds.Min.X; x < bounds.Max.X; x++ {
 			c := color.GrayModel.Convert(img.At(x, y)).(color.Gray)
-			ascii += getAsciiChar(c.Y)
+			sb.WriteByte(getAsciiChar(c.Y))
 		}
-		ascii += "\n"
+		sb.WriteByte('\n')
 	}
-	return ascii
+	return sb.String()
 }
 
-func getAsciiChar(grayScale uint8) string {
-	chars := []string{"@", "#", "S", "%", "?", "*", "+", ";", ":", ",", "."}
-	index := int(grayScale) * len(chars) / 256
-	return chars[index]
+// imageToColorAscii converts an image to color ASCII art
+func imageToColorAscii(img image.Image) string {
+	bounds := img.Bounds()
+	var sb strings.Builder
+	sb.Grow((bounds.Dx() + 1) * bounds.Dy() * 20) // Pre-allocate space, including color codes
+
+	for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
+		for x := bounds.Min.X; x < bounds.Max.X; x++ {
+			c := img.At(x, y)
+			r, g, b, _ := c.RGBA()
+			char := getAsciiChar(uint8((r + g + b) / 3 >> 8))
+			sb.WriteString(getColoredChar(char, uint8(r>>8), uint8(g>>8), uint8(b>>8)))
+		}
+		sb.WriteByte('\n')
+	}
+	return sb.String()
 }
 
-func ConvertAsciiToImage(ascii string) (image.Image, error) {
-	lines := strings.Split(ascii, "\n")
-	width := len(lines[0])
-	height := len(lines)
+// getAsciiChar maps a grayscale value to an ASCII character
+func getAsciiChar(grayScale uint8) byte {
+	index := int(grayScale) * (len(asciiChars) - 1) / 255
+	return asciiChars[index]
+}
 
-	img := image.NewRGBA(image.Rect(0, 0, width*7, height*15))
-	d := &font.Drawer{
-		Dst:  img,
-		Src:  image.NewUniform(color.Black),
-		Face: basicfont.Face7x13,
-	}
-
-	for y, line := range lines {
-		for x, char := range line {
-			d.Dot = fixed.Point26_6{X: fixed.Int26_6(x * 7 * 64), Y: fixed.Int26_6((y + 1) * 15 * 64)}
-			d.DrawString(string(char))
-		}
-	}
-
-	return img, nil
+// getColoredChar returns an ASCII character with ANSI color codes
+func getColoredChar(char byte, r, g, b uint8) string {
+	return fmt.Sprintf("\x1b[38;2;%d;%d;%dm%c\x1b[0m", r, g, b, char)
 }
