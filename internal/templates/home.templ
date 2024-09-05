@@ -6,26 +6,15 @@ templ Home(title string) {
 		<p>This is a simple website to convert images to ASCII art.</p>
 		<p>It allows you to upload an image and choose wether you want to convert it to text or to an image format.</p>
 		<p>You can also choose wether you want to convert the image to color or to black and white.</p>
-		@imageForm()
+		
+        <form hx-post="/convert" hx-target="#output" enctype="multipart/form-data" class="form">
+		    <div class="form-body">
+				    <label for="image">Upload Image:</label>
+				    <input type="file" id="image" name="image" accept="image/*" required/>
+		    </div>
+		    <button type="submit" class="submit">Generate ASCII</button>
+	    </form>
+        
         <div id="output"></div>
 	}
-}
-
-templ imageForm() {
-	<form hx-post="/convert" hx-target="#output" hx-encoding="multipart/form-data" class="form">
-		<div class="form-body">
-			<div>
-				<label for="image">Upload Image:</label>
-				<input type="file" id="image" name="image" accept="image/*" required/>
-			</div>
-			<div>
-				<p>Color:</p>
-				<input type="radio" id="color" name="color_option" value="color" checked/>
-				<label for="color">Color</label>
-				<input type="radio" id="bw" name="color_option" value="bw"/>
-				<label for="bw">Black & White</label>
-			</div>
-		</div>
-		<button type="submit" class="submit">Generate ASCII</button>
-	</form>
 }

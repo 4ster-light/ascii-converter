@@ -3,9 +3,9 @@ package handlers
 import (
 	"ascii-converter/internal/ascii"
 	"ascii-converter/internal/templates"
+
 	"fmt"
 	"html"
-
 	"io"
 	"net/http"
 )
@@ -17,16 +17,16 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 
 // Handles the form submission
 func ConvertImageHandler(w http.ResponseWriter, r *http.Request) {
-	maxMemory := int64(10 << 20) // 10 MB
+	const maxMemory = 10 << 20 // 10 MB
 
-	// Parse the form
+	// Parse the form data
 	if err := r.ParseMultipartForm(maxMemory); err != nil {
 		http.Error(w, "Unable to parse the form", http.StatusInternalServerError)
 		fmt.Println(err)
 		return
 	}
 
-	// Get the image
+	// Get the uploaded file
 	file, _, err := r.FormFile("image")
 	if err != nil {
 		http.Error(w, "Unable to get the image", http.StatusInternalServerError)
@@ -35,7 +35,7 @@ func ConvertImageHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	// Read the image
+	// Read the file data
 	imageBytes, err := io.ReadAll(file)
 	if err != nil {
 		http.Error(w, "Unable to read the image", http.StatusInternalServerError)
@@ -43,17 +43,15 @@ func ConvertImageHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Get the options
-	colorOption := r.FormValue("color_option")
-
-	// Convert the image and get the ASCII text
-	asciiResult, err := ascii.ConvertImage(imageBytes, colorOption)
+	// Convert the image to ASCII
+	asciiResult, err := ascii.ConvertImage(imageBytes)
 	if err != nil {
 		http.Error(w, "Unable to convert the image", http.StatusInternalServerError)
 		fmt.Println(err)
 		return
 	}
 
-	// Return the ASCII text or the image
+	// Set the content type and return the ASCII text
+	w.Header().Set("Content-Type", "text/html")
 	fmt.Fprintf(w, "<pre>%s</pre>", html.EscapeString(asciiResult))
 }

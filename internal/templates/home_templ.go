@@ -38,47 +38,13 @@ func Home(title string) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<h1>Welcome to ASCII converter</h1><p>This is a simple website to convert images to ASCII art.</p><p>It allows you to upload an image and choose wether you want to convert it to text or to an image format.</p><p>You can also choose wether you want to convert the image to color or to black and white.</p>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = imageForm().Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <div id=\"output\"></div>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<h1>Welcome to ASCII converter</h1><p>This is a simple website to convert images to ASCII art.</p><p>It allows you to upload an image and choose wether you want to convert it to text or to an image format.</p><p>You can also choose wether you want to convert the image to color or to black and white.</p><form hx-post=\"/convert\" hx-target=\"#output\" enctype=\"multipart/form-data\" class=\"form\"><div class=\"form-body\"><label for=\"image\">Upload Image:</label> <input type=\"file\" id=\"image\" name=\"image\" accept=\"image/*\" required></div><button type=\"submit\" class=\"submit\">Generate ASCII</button></form><div id=\"output\"></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return templ_7745c5c3_Err
 		})
 		templ_7745c5c3_Err = Base(title).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		return templ_7745c5c3_Err
-	})
-}
-
-func imageForm() templ.Component {
-	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-		if !templ_7745c5c3_IsBuffer {
-			defer func() {
-				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err == nil {
-					templ_7745c5c3_Err = templ_7745c5c3_BufErr
-				}
-			}()
-		}
-		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var3 == nil {
-			templ_7745c5c3_Var3 = templ.NopComponent
-		}
-		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form hx-post=\"/convert\" hx-target=\"#output\" hx-encoding=\"multipart/form-data\" class=\"form\"><div class=\"form-body\"><div><label for=\"image\">Upload Image:</label> <input type=\"file\" id=\"image\" name=\"image\" accept=\"image/*\" required></div><div><p>Color:</p><input type=\"radio\" id=\"color\" name=\"color_option\" value=\"color\" checked> <label for=\"color\">Color</label> <input type=\"radio\" id=\"bw\" name=\"color_option\" value=\"bw\"> <label for=\"bw\">Black & White</label></div></div><button type=\"submit\" class=\"submit\">Generate ASCII</button></form>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
