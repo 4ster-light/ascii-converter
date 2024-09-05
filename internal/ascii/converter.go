@@ -21,7 +21,11 @@ func ConvertImage(imageBytes []byte) (string, error) {
 		return "", fmt.Errorf("unable to decode the image: %w", err)
 	}
 
-	img = resize.Resize(100, 0, img, resize.Lanczos3)
+	width := 100
+	ratio := float64(img.Bounds().Dy()) / float64(img.Bounds().Dx())
+	height := int(float64(width) * ratio * 0.5)
+
+	img = resize.Resize(uint(width), uint(height), img, resize.Lanczos3)
 
 	asciiArt := convertToAscii(img)
 

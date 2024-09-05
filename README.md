@@ -9,4 +9,24 @@ This is a simple website that generates ASCII art from a provided image.
 
 > [!WARNING]
 > This website is still in development and is not yet ready for production.
-> At the moment, it is only a skeleton boilerplate.
+> At the moment, it can only convert png images, to a black and white output.
+
+## How to run the website
+In case you want to run the website locally, you can follow these steps:
+
+1. Clone the repository:
+```bash
+git clone https://github.com/07devAdvb/ascii-converter.git 
+```
+
+2. Change the working directory to the project folder:
+```bash
+cd ascii-converter
+```
+
+3. Run the website:
+```bash
+go run ./cmd/server/main.go
+```
+
+4. Open your browser and navigate to `http://localhost:8080`.
