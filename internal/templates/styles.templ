@@ -1,45 +1,132 @@
 package templates
 
 templ Styles() {
-    <!-- CSS Theme -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
-	
     <style>
-        .title {
-            text-align: center;
-            font-family: monospace;
-        }
-
-        .form {
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            margin: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            border: 1px solid #ccc;
-            padding: 20px;
-            border-radius: 5px;
-        }
-        .form-body {
-            margin-bottom: 40px;
-        }
-        .submit {
-            width: 100%;
+            min-height: 100vh;
         }
 
-        .footer {
+        main {
+            padding: 40px;
+            margin-top: -50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        span {
+            font-weight: 600;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 50px;
+            margin-bottom: 20px;
+            color: #ff6600;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 60%;
+            margin-bottom: 40px;
+            margin-top: 40px;
+        }
+
+        .form-body {
+            background-color: #1a1a1a;
+            padding: 20px;
+            padding-bottom: 15px;
+            padding-right: 40px;
+            border-radius: 8px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 32px;
+            font-family: monospace;
+            font-weight: bold;
+            text-align: center;
+            color: #ff6600;
+        }
+
+        input[type="file"] {
+        /*
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            background-color: #2a2a2a;
+            border: 1px solid #444;
+            border-radius: 4px;
+            color: #fff;
+        */
+            display: none;
+        }
+
+        button[type="submit"] {
+            background-color: #ff6600;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        #output {
+            width: 100%;
+            margin-left: -20px;
+            margin-right: -20px;
+            padding: 20px;
+            background-color: #1a1a1a;
+            border-radius: 8px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            border: 1px solid #333;
+            font-family: monospace;
+            font-size: 1px;
+            line-height: 1.2;
+            text-align: center;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            font-size: 14px;
+            color: #888888;
+            margin-top: auto;
             display: flex;
             flex-direction: row;
             justify-content: space-between;
         }
-        .footer-links {
-            list-style: none;
+
+        ul {
+            list-style-type: none;
             display: flex;
+            justify-content: center;
+            align-items: center;
             flex-direction: row;
             gap: 10px;
         }
 
-        #output {
-            text-align: center;
+        footer a {
+            color: #ff6600;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
         }
     </style>
 }

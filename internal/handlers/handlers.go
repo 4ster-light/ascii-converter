@@ -12,7 +12,7 @@ import (
 
 // Presents the page and has a form to upload an image
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
-	templates.Home("🏠 Home").Render(r.Context(), w)
+	templates.Home("✰ArtSCII✰").Render(r.Context(), w)
 }
 
 // Handles the form submission

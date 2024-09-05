@@ -21,7 +21,7 @@ func ConvertImage(imageBytes []byte) (string, error) {
 		return "", fmt.Errorf("unable to decode the image: %w", err)
 	}
 
-	width := 100
+	width := 1000
 	ratio := float64(img.Bounds().Dy()) / float64(img.Bounds().Dx())
 	height := int(float64(width) * ratio * 0.5)
 

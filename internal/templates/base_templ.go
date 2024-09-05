@@ -47,7 +47,7 @@ func Base(title string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!-- HTMX --><script src=\"https://unpkg.com/htmx.org@2.0.2\" integrity=\"sha384-Y7hw+L/jvKeWIRRkqWYfPcvVxHzVzn5REgzbawhxAuQGwX1XWe70vji+VSeHOThJ\" crossorigin=\"anonymous\"></script></head><body><header><h1 class=\"title\">🎨 ASCII Converter 🎨</h1></header><hr><main>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!-- HTMX --><script src=\"https://unpkg.com/htmx.org@2.0.2\" integrity=\"sha384-Y7hw+L/jvKeWIRRkqWYfPcvVxHzVzn5REgzbawhxAuQGwX1XWe70vji+VSeHOThJ\" crossorigin=\"anonymous\"></script></head><body><header><h1 class=\"title\">✰ArtSCII✰</h1></header><main>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -55,7 +55,7 @@ func Base(title string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</main><footer class=\"footer\"><p>Made by David Vivar Bogónez, aka: Aster🌟</p><ul class=\"footer-links\"><li><a href=\"https://twitter.com/07devAdvb\">𝕏 - Twitter</a></li>| <li><a href=\"https://github.com/07devAdvb/ascii-converter\">GitHub</a></li></ul></footer></body></html>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</main><footer><p>Made by David Vivar Bogónez, aka: Aster</p><ul><li><a href=\"https://twitter.com/4ster_light\">𝕏 - Twitter</a></li>| <li><a href=\"https://github.com/07devAdvb/ascii-converter\">GitHub</a></li></ul></footer></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
