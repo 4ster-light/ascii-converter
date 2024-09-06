@@ -11,7 +11,7 @@ import (
 	"github.com/nfnt/resize"
 )
 
-const asciiChars = ".:;=+*#%@"
+const asciiChars = "`.',-~:;=+*#%@M"
 
 // Converts a PNG byte slice to ASCII art
 func ConvertImage(imageBytes []byte) (string, error) {
@@ -21,7 +21,7 @@ func ConvertImage(imageBytes []byte) (string, error) {
 		return "", fmt.Errorf("unable to decode the image: %w", err)
 	}
 
-	width := 1000
+	width := 500
 	ratio := float64(img.Bounds().Dy()) / float64(img.Bounds().Dx())
 	height := int(float64(width) * ratio * 0.5)
 
