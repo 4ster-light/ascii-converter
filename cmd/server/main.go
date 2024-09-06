@@ -5,6 +5,7 @@ import (
 
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -22,8 +23,13 @@ func main() {
 	r.Post("/convert", handlers.ConvertImageHandler)
 
 	// Start server
-	log.Println("Server running on: http://localhost:8080")
-	if err := http.ListenAndServe(":8080", r); err != nil {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	log.Printf("Starting server on: http://localhost:%s", port)
+	if err := http.ListenAndServe(":"+port, r); err != nil {
 		log.Fatal(err)
 	}
 }

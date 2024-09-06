@@ -26,20 +26,20 @@ func Base(title string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><!-- Title --><title>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><!-- SEO --><meta name=\"description\" content=\"ASCII art generator - Convert images to ASCII text format\"><meta name=\"keywords\" content=\"ASCII art, image converter, text art, PNG to ASCII\"><script type=\"application/ld+json\">\r\n                {\r\n                    \"@context\": \"https://schema.org\",\r\n                    \"@type\": \"WebApplication\",\r\n                    \"name\": \"ASCII Art Generator\",\r\n                    \"description\": \"Convert images to ASCII text format\",\r\n                    \"applicationCategory\": \"Multimedia\",\r\n                    \"operatingSystem\": \"All\",\r\n                    \"offers\": {\r\n                        \"@type\": \"Offer\",\r\n                        \"price\": \"0\"\r\n                    }\r\n                }\r\n            </script><!-- Title --><title>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/base.templ`, Line: 11, Col: 17}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/base.templ`, Line: 29, Col: 17}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</title>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</title><!-- Styles -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

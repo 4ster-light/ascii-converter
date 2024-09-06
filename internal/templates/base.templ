@@ -7,9 +7,28 @@ templ Base(title string) {
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
+            <!-- SEO -->
+            <meta name="description" content="ASCII art generator - Convert images to ASCII text format">
+            <meta name="keywords" content="ASCII art, image converter, text art, PNG to ASCII">
+            <script type="application/ld+json">
+                {
+                    "@context": "https://schema.org",
+                    "@type": "WebApplication",
+                    "name": "ASCII Art Generator",
+                    "description": "Convert images to ASCII text format",
+                    "applicationCategory": "Multimedia",
+                    "operatingSystem": "All",
+                    "offers": {
+                        "@type": "Offer",
+                        "price": "0"
+                    }
+                }
+            </script>
+
             <!-- Title -->
 			<title>{ title }</title>
 
+            <!-- Styles -->
             @Styles()
             
             <!-- HTMX -->
