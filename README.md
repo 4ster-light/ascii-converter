@@ -34,7 +34,6 @@ docker run -p 8080:8080 ascii
 5. Open your browser and navigate to `http://localhost:8080`.
 ---
 ### Using Go
-2.
 In case you want to run the website locally, you can follow these steps:
 
 1. Clone the repository:

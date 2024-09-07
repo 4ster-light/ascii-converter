@@ -22,12 +22,13 @@ func main() {
 	r.Get("/", handlers.HomeHandler)
 	r.Post("/convert", handlers.ConvertImageHandler)
 
-	// Start server
+	// Get the port
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
 
+	// Start server
 	log.Printf("Starting server on: http://localhost:%s", port)
 	if err := http.ListenAndServe(":"+port, r); err != nil {
 		log.Fatal(err)
