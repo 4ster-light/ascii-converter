@@ -10,12 +10,9 @@ import (
 	"path/filepath"
 )
 
-<<<<<<< HEAD
-=======
 const maxMemory = 10 << 20 // 10 MB
 
 // Presents the page and has a form to upload an image
->>>>>>> baa14539c471507f6a1f7dee252b4f5415d3aaba
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	templates.Home("✰ArtSCII✰").Render(r.Context(), w)
 }
