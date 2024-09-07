@@ -11,12 +11,10 @@ templ Home(title string) {
         </section>
 		
         <form hx-post="/convert" hx-target="#output" enctype="multipart/form-data">
-		    <div class="form-body">
-				<label for="image">
-                    UPLOAD IMAGE
-				    <input type="file" id="image" name="image" accept="image/*" alt="Upload image for Ascii conversion" required>
-                </label>
-		    </div>
+			<label for="image">
+                UPLOAD IMAGE
+			    <input type="file" id="image" name="image" accept="image/*" alt="Upload image for Ascii conversion" required>
+            </label>
 		    <button type="submit">Generate ASCII</button>
 	    </form>
         

@@ -41,19 +41,16 @@ templ Styles() {
             margin-top: 40px;
         }
 
-        .form-body {
-            background-color: #1a1a1a;
-            padding: 20px;
+        label {
             padding-bottom: 15px;
             padding-right: 40px;
-            border-radius: 8px;
-            width: 100%;
             margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
+            width: 100%;
+            border-radius: 8px;
+            background-color: #1a1a1a;
+            padding: 20px;
             font-size: 32px;
+            display: block;
             font-family: monospace;
             font-weight: bold;
             text-align: center;
@@ -61,6 +58,7 @@ templ Styles() {
         }
 
         label:hover {
+            background-color: #333;
             cursor: pointer;
         }
 
@@ -91,7 +89,9 @@ templ Styles() {
             cursor: pointer;
             border-radius: 4px;
             font-weight: bold;
-            transition: background-color 0.3s;
+        }
+        button[type="submit"]:hover {
+            background-color: #b44800;
         }
 
         #output {

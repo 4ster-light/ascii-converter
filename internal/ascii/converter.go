@@ -5,20 +5,37 @@ import (
 	"fmt"
 	"image"
 	"image/color"
+	"image/jpeg"
 	"image/png"
 	"strings"
 
 	"github.com/nfnt/resize"
+	"golang.org/x/image/webp"
 )
 
 const asciiChars = "`.',-~:;=+*#%@M"
 
 // Converts a PNG byte slice to ASCII art
 func ConvertImage(imageBytes []byte) (string, error) {
-	// Decode the PNG image
-	img, err := png.Decode(bytes.NewReader(imageBytes))
+	format, err := detectImageFormat(imageBytes)
 	if err != nil {
-		return "", fmt.Errorf("unable to decode the image: %w", err)
+		return "", fmt.Errorf("failed to detect image format: %w", err)
+	}
+
+	var img image.Image
+	switch format {
+	case "jpeg":
+		img, err = jpeg.Decode(bytes.NewReader(imageBytes))
+	case "png":
+		img, err = png.Decode(bytes.NewReader(imageBytes))
+	case "webp":
+		img, err = webp.Decode(bytes.NewReader(imageBytes))
+	default:
+		return "", fmt.Errorf("unsupported image format: %s", format)
+	}
+
+	if err != nil {
+		return "", fmt.Errorf("failed to decode image: %w", err)
 	}
 
 	width := 500
@@ -32,6 +49,18 @@ func ConvertImage(imageBytes []byte) (string, error) {
 	asciiArt = addBorder(asciiArt)
 
 	return asciiArt, nil
+}
+
+func detectImageFormat(imageBytes []byte) (string, error) {
+	if bytes.HasPrefix(imageBytes, []byte("\xFF\xD8\xFF")) {
+		return "jpeg", nil
+	} else if bytes.HasPrefix(imageBytes, []byte("\x89PNG\r\n\x1a\n")) {
+		return "png", nil
+	} else if bytes.HasPrefix(imageBytes, []byte("RIFF")) && bytes.Contains(imageBytes[8:16], []byte("WEBP")) {
+		return "webp", nil
+	}
+
+	return "", fmt.Errorf("unsupported image format")
 }
 
 func convertToAscii(img image.Image) string {
