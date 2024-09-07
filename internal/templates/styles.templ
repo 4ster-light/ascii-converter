@@ -14,22 +14,23 @@ templ Styles() {
         }
 
         main {
-            padding: 40px;
-            margin-top: -50px;
+            max-width: 1200px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
-        span {
-            font-weight: 600;
-        }
-
         .title {
+            margin-top: 40px;
             text-align: center;
             font-size: 50px;
             margin-bottom: 20px;
             color: #ff6600;
+        }
+
+        h1 {
+            font-size: 32px;
         }
 
         form {
@@ -56,30 +57,14 @@ templ Styles() {
             text-align: center;
             color: #ff6600;
         }
-
         label:hover {
             background-color: #333;
             cursor: pointer;
         }
 
         input[type="file"] {
-        /*
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            background-color: #2a2a2a;
-            border: 1px solid #444;
-            border-radius: 4px;
-            color: #fff;
-        */
             display: none;
         }
-
-        /*
-        input[type="file"]:hover {
-            cursor: pointer;
-        }
-        */
 
         button[type="submit"] {
             background-color: #ff6600;
@@ -94,31 +79,35 @@ templ Styles() {
             background-color: #b44800;
         }
 
+        #output-container {
+            width: 100%;
+        }
+
         #output {
             width: 100%;
-            margin-left: -20px;
-            margin-right: -20px;
             padding: 20px;
             background-color: #1a1a1a;
             border-radius: 8px;
-            white-space: pre-wrap;
+            white-space: pre;
             word-wrap: break-word;
             border: 1px solid #333;
             font-family: monospace;
             font-size: 2.5px;
             line-height: 1.2;
             text-align: center;
+            overflow-x: auto;
         }
 
         footer {
             text-align: center;
-            padding: 20px 0;
-            font-size: 14px;
+            padding: 20px;
+            font-size: 16px;
             color: #888888;
             margin-top: auto;
             display: flex;
             flex-direction: row;
             justify-content: space-between;
+            width: 90%;
         }
 
         ul {
@@ -130,13 +119,32 @@ templ Styles() {
             gap: 10px;
         }
 
-        footer a {
+        a {
             color: #ff6600;
             text-decoration: none;
         }
 
         footer a:hover {
             text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            main {
+                padding: 10px;
+            }
+
+            footer {
+                padding: 10px;
+            }
+
+            #output {
+                font-size: 1.5px;
+            }
+
+            #output-container {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch; /* For smooth scrolling on iOS */
+            }
         }
     </style>
 }
