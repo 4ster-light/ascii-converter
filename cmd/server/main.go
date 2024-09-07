@@ -21,6 +21,7 @@ func main() {
 	// Routes
 	r.Get("/", handlers.HomeHandler)
 	r.Post("/convert", handlers.ConvertImageHandler)
+	r.Post("/convert-to-image", handlers.ConvertAsciiToImageHandler)
 
 	// Start server
 	port := os.Getenv("PORT")

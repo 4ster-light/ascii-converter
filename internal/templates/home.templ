@@ -1,23 +1,26 @@
 package templates
 
+
 templ Home(title string) {
 	@Base(title) {
 		<section>
-            <h1>Welcome to my ascii art generator</h1>
-            <p>This is a simple website to convert images to ascii art.</p>
-            <p>It allows you to upload an image and convert it to an ascii text format.</p>
-            <p>At the moment it supports common image formats like PNG, JPEG, JPG and WEBP.</p>
-            <p>The output is black and white text at the moment, this will in the future change allowing to choose the background color and/or conserve the colors of the original image.</p>
+            <h1>Welcome to my ASCII art generator</h1>
+            <p>This is a simple website to convert images to ASCII art.</p>
+            <p>It allows you to upload an image and convert it to an ASCII text format.</p>
+            <p>At the moment, it supports common image formats like PNG, JPEG, JPG, and WEBP.</p>
+            <p>The output is black and white text at the moment. In the future, it will allow you to choose the background color and/or conserve the colors of the original image.</p>
         </section>
 		
-        <form hx-post="/convert" hx-target="#output" enctype="multipart/form-data">
-			<label for="image">
+        <!-- Form to upload an image and generate ASCII -->
+        <form hx-post="/convert" hx-target="#output-container" enctype="multipart/form-data">
+            <label for="image">
                 UPLOAD IMAGE
-			    <input type="file" id="image" name="image" accept="image/*" alt="Upload image for Ascii conversion" required>
+                <input type="file" id="image" name="image" accept="image/*" alt="Upload image for ASCII conversion" required>
             </label>
-		    <button type="submit">Generate ASCII</button>
-	    </form>
+            <button type="submit">Generate ASCII</button>
+        </form>
         
+        <!-- Output container to display ASCII art and download button -->
         <div id="output-container">
             <div id="output"></div>
         </div>
