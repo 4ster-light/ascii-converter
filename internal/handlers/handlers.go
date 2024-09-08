@@ -1,4 +1,5 @@
 package handlers
+
 import (
 	"ascii-converter/internal/ascii"
 	"ascii-converter/internal/templates"
@@ -25,6 +26,7 @@ func ConvertImageHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		return
 	}
+
 	// Get the uploaded file
 	file, _, err := r.FormFile("image")
 	if err != nil {
@@ -33,6 +35,7 @@ func ConvertImageHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer file.Close()
+
 	// Read the file data
 	imageBytes, err := io.ReadAll(file)
 	if err != nil {
@@ -40,6 +43,7 @@ func ConvertImageHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		return
 	}
+
 	// Convert the image to ASCII
 	asciiResult, err := ascii.ConvertImage(imageBytes)
 	if err != nil {
@@ -58,6 +62,7 @@ func ConvertImageHandler(w http.ResponseWriter, r *http.Request) {
 		</form>
 	`, html.EscapeString(asciiResult), html.EscapeString(asciiResult))
 }
+
 // Handles ASCII to image conversion and serves the download
 func ConvertAsciiToImageHandler(w http.ResponseWriter, r *http.Request) {
 	asciiArt := r.FormValue("ascii-art")
@@ -65,6 +70,7 @@ func ConvertAsciiToImageHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Missing ASCII art input", http.StatusBadRequest)
 		return
 	}
+
 	// Define the output path for the generated image
 	outputFile := filepath.Join(os.TempDir(), "ascii_image.png")
 
@@ -74,6 +80,7 @@ func ConvertAsciiToImageHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error generating image", http.StatusInternalServerError)
 		return
 	}
+
 	// Serve the generated image as a download
 	w.Header().Set("Content-Disposition", "attachment; filename=ascii_image.png")
 	w.Header().Set("Content-Type", "image/png")

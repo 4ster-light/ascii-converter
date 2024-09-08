@@ -20,7 +20,7 @@ func main() {
 
 	// Routes
 	r.Get("/", handlers.HomeHandler)
-	r.Post("/convert", handlers.ConvertImageHandler)
+	r.Post("/convert-to-ascii", handlers.ConvertImageHandler)
 	r.Post("/convert-to-image", handlers.ConvertAsciiToImageHandler)
 
 	// Get the port

@@ -11,7 +11,7 @@ templ Home(title string) {
         </section>
 		
         <!-- Form to upload an image and generate ASCII -->
-        <form hx-post="/convert" hx-target="#output-container" enctype="multipart/form-data">
+        <form hx-post="/convert-to-ascii" hx-target="#output" enctype="multipart/form-data">
             <label for="image">
                 UPLOAD IMAGE
                 <input type="file" id="image" name="image" accept="image/*" alt="Upload image for ASCII conversion" required>

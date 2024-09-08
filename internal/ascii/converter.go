@@ -21,6 +21,8 @@ import (
 const (
 	asciiChars = "`.',-~:;=+*#%@M" // ASCII characters to use for the image rendering
 	width      = 500               // Width of the ASCII art in characters
+	fontWidth  = 7                 // Width of each character in the font
+	fontHeight = 13                // Height of each character in the font
 )
 
 // ConvertImage converts an image byte slice to ASCII art
@@ -122,26 +124,26 @@ func addBorder(asciiArt string) string {
 	bordered = append(bordered, top)
 	return strings.Join(bordered, "\n")
 }
-// Convert ASCII art to an image
 
+// Convert ASCII art to an image
 func ConvertAsciiToImage(asciiArt string, outputPath string) error {
 	lines := strings.Split(asciiArt, "\n")
 
 	// Calculate the dimensions of the image
-	fontWidth := 7
-	fontHeight := 13
-	imgWidth := fontWidth * len(lines[0])
+	imgWidth := fontWidth * (len(lines[0]) - 1)
 	imgHeight := fontHeight * len(lines)
 
 	// Create a new RGBA image
 	img := image.NewRGBA(image.Rect(0, 0, imgWidth, imgHeight))
 
 	// Fill the image with white background
-	white := color.RGBA{255, 255, 255, 255}
+	// Shouldn't it be better to not have a background since it's a PNG?
+	// Right now same color as website
+	white := color.RGBA{26, 26, 26, 255}
 	draw.Draw(img, img.Bounds(), &image.Uniform{white}, image.Point{}, draw.Src)
 
 	// Draw the ASCII text onto the image
-	black := color.RGBA{0, 0, 0, 255}
+	black := color.RGBA{255, 255, 255, 255}
 
 	for y, line := range lines {
 		for x, ch := range line {
@@ -166,6 +168,8 @@ func ConvertAsciiToImage(asciiArt string, outputPath string) error {
 
 	return err
 }
+
+// Draws a character on the image at the specified position
 func drawChar(img *image.RGBA, col color.Color, x, y int, s string) {
 	point := fixed.Point26_6{X: fixed.I(x), Y: fixed.I(y)}
 	d := &font.Drawer{
