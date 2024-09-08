@@ -19,15 +19,15 @@ templ Home(title string) {
             <button type="submit">Generate ASCII</button>
         </form>
         
-        <!-- Content editable div to paste image -->
-        <div id="paste-container" contenteditable="true"></div>
-        
         <!-- Output container to display ASCII art and download button -->
         <div id="output-container">
             <div id="output"></div>
         </div>
+
+        <!-- Content editable div to paste image
+        <div id="paste-container" contenteditable="true"></div> -->
         
-        <!-- Script to handle paste event -->
+        <!-- Script to handle paste event
         <script>
             document.getElementById('paste-container').addEventListener('paste', async (event) => {
                 event.preventDefault();
@@ -61,6 +61,6 @@ templ Home(title string) {
                     console.error('Error reading clipboard:', error);
                 }
             });
-        </script>
+        </script> -->
 	}
 }
