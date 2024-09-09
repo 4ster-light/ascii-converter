@@ -31,8 +31,6 @@ templ Scripts() {
             if (files.length > 0 && files[0].type.startsWith('image/')) {
                 // Set the file to the input for form submission
                 fileInput.files = dt.files;
-
-                // Optionally, change the text or appearance of the drop zone after the file is dropped
                 dropZone.innerHTML = `
                     <form hx-post="/convert-to-ascii" hx-target="#output" enctype="multipart/form-data">
                         <label for="image">
