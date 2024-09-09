@@ -11,56 +11,19 @@ templ Home(title string) {
         </section>
 		
         <!-- Form to upload an image and generate ASCII -->
-        <form hx-post="/convert-to-ascii" hx-target="#output" enctype="multipart/form-data">
-            <label for="image">
-                UPLOAD IMAGE
-                <input type="file" id="image" name="image" accept="image/*" alt="Upload image for ASCII conversion" required>
-            </label>
-            <button type="submit">Generate ASCII</button>
-        </form>
+        <div class="paste-container">
+            <form hx-post="/convert-to-ascii" hx-target="#output" enctype="multipart/form-data">
+                <label for="image">
+                    <span style="text-decoration: underline;">UPLOAD IMAGE:</span> Click or drag and drop an image here
+                    <input type="file" id="image" name="image" accept="image/*" alt="Upload image for ASCII conversion" required>
+                </label>
+                <button type="submit">Generate ASCII</button>
+            </form>
+        </div>
         
         <!-- Output container to display ASCII art and download button -->
         <div id="output-container">
             <div id="output"></div>
         </div>
-
-        <!-- Content editable div to paste image
-        <div id="paste-container" contenteditable="true"></div> -->
-        
-        <!-- Script to handle paste event
-        <script>
-            document.getElementById('paste-container').addEventListener('paste', async (event) => {
-                event.preventDefault();
-                try {
-                    const clipboardItems = await navigator.clipboard.read();
-                    for (const clipboardItem of clipboardItems) {
-                        if (clipboardItem.kind === 'image') {
-                            const blob = await clipboardItem.getType(clipboardItem.types[0]);
-                            const file = new File([blob], 'pasted_image.' + clipboardItem.types[0].split('/')[1], {
-                                type: clipboardItem.types[0],
-                            });
-                            // Create a new FormData object to send the pasted image to the server
-                            const formData = new FormData();
-                            formData.append('image', file);
-                            // Send the formData to the server using the same endpoint as the upload form
-                            fetch('/convert', {
-                                method: 'POST',
-                                body: formData,
-                            })
-                            .then(response => response.text())
-                            .then((asciiArt) => {
-                                // Display the generated ASCII art
-                                document.getElementById('output').innerHTML = asciiArt;
-                            })
-                            .catch((error) => {
-                                console.error('Error generating ASCII art:', error);
-                            });
-                        }
-                    }
-                } catch (error) {
-                    console.error('Error reading clipboard:', error);
-                }
-            });
-        </script> -->
 	}
 }

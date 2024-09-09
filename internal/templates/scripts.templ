@@ -1,0 +1,50 @@
+package templates
+
+templ Scripts() {
+    <script>
+        const dropZone = document.getElementById('paste-container');
+        const fileInput = document.getElementById('image');
+        
+        // Prevent default behavior for drag and drop events
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            }, false);
+        });
+
+        // Add highlight when dragging over the drop zone
+        dropZone.addEventListener('dragenter', () => {
+            dropZone.classList.add('highlight');
+        }, false);
+
+        // Remove highlight when dragging leaves the drop zone
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('highlight');
+        }, false);
+
+        // Handle file drop
+        dropZone.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+
+            if (files.length > 0 && files[0].type.startsWith('image/')) {
+                // Set the file to the input for form submission
+                fileInput.files = dt.files;
+
+                // Optionally, change the text or appearance of the drop zone after the file is dropped
+                dropZone.innerHTML = `
+                    <form hx-post="/convert-to-ascii" hx-target="#output" enctype="multipart/form-data">
+                        <label for="image">
+                            Image ready!
+                            <input type="file" id="image" name="image" accept="image/*" alt="Upload image for ASCII conversion" required>
+                        </label>
+                        <button type="submit">Generate ASCII</button>
+                    </form>
+                `;
+            } else {
+                alert('Please drop an image file.');
+            }
+        }, false);
+    </script>
+}

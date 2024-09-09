@@ -35,31 +35,34 @@ templ Styles() {
 
         section {
             width: 100%;
+            margin-bottom: 40px;
         }
 
         form {
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: 60%;
-            margin-bottom: 40px;
-            margin-top: 40px;
+            width: 100%;
+        }
+
+        .paste-container {
+            width: 100%;
+        }
+        .highlight {
+            border: dashed 2px #ff6600;
         }
 
         label {
-            padding-bottom: 15px;
-            padding-right: 40px;
-            margin-bottom: 20px;
+            padding: 30px;
             width: 100%;
-            border-radius: 8px;
+            border-radius: 10px;
             background-color: #1a1a1a;
-            padding: 20px;
-            font-size: 32px;
+            color: #ff6600;
+            font-size: 30px;
             display: block;
             font-family: monospace;
             font-weight: bold;
             text-align: center;
-            color: #ff6600;
         }
         label:hover {
             background-color: #333;
@@ -75,6 +78,7 @@ templ Styles() {
             color: #ffffff;
             border: none;
             padding: 10px 20px;
+            margin: 40px 0;
             cursor: pointer;
             border-radius: 4px;
             font-weight: bold;
@@ -89,7 +93,7 @@ templ Styles() {
 
         #output {
             width: 100%;
-            padding: 20px;
+            padding: 20px 0;
             background-color: #1a1a1a;
             border-radius: 8px;
             white-space: pre;
