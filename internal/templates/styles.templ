@@ -45,14 +45,7 @@ templ Styles() {
             width: 100%;
         }
 
-        .paste-container {
-            width: 100%;
-        }
-        .highlight {
-            border: dashed 2px #ff6600;
-        }
-
-        label {
+        input[type="file"] {
             padding: 30px;
             width: 100%;
             border-radius: 10px;
@@ -64,13 +57,9 @@ templ Styles() {
             font-weight: bold;
             text-align: center;
         }
-        label:hover {
+        input[type="file"]:hover {
             background-color: #333;
             cursor: pointer;
-        }
-
-        input[type="file"] {
-            display: none;
         }
 
         button[type="submit"] {

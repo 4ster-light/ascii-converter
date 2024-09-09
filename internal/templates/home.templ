@@ -9,17 +9,12 @@ templ Home(title string) {
             <p>At the moment, it supports common image formats like PNG, JPEG, JPG, and WEBP.</p>
             <p>The output is black and white text at the moment. <span style="color: #ff6600;">Now you can download as a PNG image too!!!</span>.</p>
         </section>
-		
+
         <!-- Form to upload an image and generate ASCII -->
-        <div class="paste-container">
-            <form hx-post="/convert-to-ascii" hx-target="#output" enctype="multipart/form-data">
-                <label for="image">
-                    <span style="text-decoration: underline;">UPLOAD IMAGE:</span> Click or drag and drop an image here
-                    <input type="file" id="image" name="image" accept="image/*" alt="Upload image for ASCII conversion" required>
-                </label>
-                <button type="submit">Generate ASCII</button>
-            </form>
-        </div>
+        <form hx-post="/convert-to-ascii" hx-target="#output" enctype="multipart/form-data">
+            <input type="file" id="image" name="image" accept="image/*" alt="Upload image for ASCII conversion" required>
+            <button type="submit">Generate ASCII</button>
+        </form>
         
         <!-- Output container to display ASCII art and download button -->
         <div id="output-container">
