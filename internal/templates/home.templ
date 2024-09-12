@@ -15,18 +15,13 @@ templ Home(title string) {
             <input type="file" id="image" name="image" accept="image/*" alt="Upload image for ASCII conversion" required>
             <button type="submit">Generate ASCII</button>
             <button id="clear-button">Clear Image</button>
-            //Firstmethod
-            //HTMLFormElement reset//
-            
-            //<button type="reset">Clear Image</button>//
+          
             
         </form>
-        
         <!-- Output container to display ASCII art and download button -->
         <div id="output-container">
             <div id="output"></div>
         </div>
-        //second method
          <!-- Add the script to handle the clear button -->
         <script>
             // Get the form and image elements
