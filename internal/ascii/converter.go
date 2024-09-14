@@ -9,6 +9,7 @@ import (
 	"image/jpeg"
 	"image/png"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/nfnt/resize"
@@ -26,17 +27,16 @@ const (
 )
 
 // ConvertImage converts an image byte slice to ASCII art
-func ConvertImage(imageBytes []byte) (string, error) {
+func ConvertImage(imageBytes []byte, preserveColor bool) (string, error) {
 	img, err := decodeImage(imageBytes)
 	if err != nil {
 		return "", err
 	}
 
 	resizedImg := resizeImage(img)
-	asciiArt := convertToAscii(resizedImg)
-	borderedAsciiArt := addBorder(asciiArt)
+	asciiArt := convertToAscii(resizedImg, preserveColor)
 
-	return borderedAsciiArt, nil
+	return asciiArt, nil
 }
 
 // decodeImage detects the image format and decodes it
@@ -89,17 +89,24 @@ func resizeImage(img image.Image) image.Image {
 }
 
 // convertToAscii converts an image to ASCII characters
-func convertToAscii(img image.Image) string {
+func convertToAscii(img image.Image, preserveColor bool) string {
 	bounds := img.Bounds()
 	var sb strings.Builder
 
-	// Iterate over each pixel in the image and convert it to grayscale and then to ASCII
 	for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
 		for x := bounds.Min.X; x < bounds.Max.X; x++ {
-			c := color.GrayModel.Convert(img.At(x, y))
-			grayColor, _ := c.(color.Gray)
+			c := img.At(x, y)
+			grayColor := color.GrayModel.Convert(c).(color.Gray)
 			asciiIndex := int(grayColor.Y) * (len(asciiChars) - 1) / 255
-			sb.WriteByte(asciiChars[asciiIndex])
+			char := string(asciiChars[asciiIndex])
+
+			if preserveColor {
+				r, g, b, _ := c.RGBA()
+				hexColor := fmt.Sprintf("#%02X%02X%02X", r>>8, g>>8, b>>8)
+				sb.WriteString(fmt.Sprintf("<x-char style=\"color:%s\">%s</x-char>", hexColor, char))
+			} else {
+				sb.WriteString(char)
+			}
 		}
 		sb.WriteByte('\n')
 	}
@@ -107,66 +114,76 @@ func convertToAscii(img image.Image) string {
 	return sb.String()
 }
 
-// addBorder adds a border around the ASCII art
-func addBorder(asciiArt string) string {
-	lines := strings.Split(asciiArt, "\n")
-	width := len(lines[0]) + 4
+// Convert ASCII art to an image
+func ConvertAsciiToImage(asciiArt string, outputPath string, preserveColor bool) error {
+	lines := strings.Split(strings.TrimSpace(asciiArt), "\n")
 
-	top := strings.Repeat("-", width)
-	bordered := []string{top}
-
+	// Calculate the dimensions of the image
+	maxLineLength := 0
 	for _, line := range lines {
-		if line != "" {
-			bordered = append(bordered, fmt.Sprintf("| %s |", line))
+		if len(line) > maxLineLength {
+			maxLineLength = len(line)
 		}
 	}
 
-	bordered = append(bordered, top)
-	return strings.Join(bordered, "\n")
-}
-
-// Convert ASCII art to an image
-func ConvertAsciiToImage(asciiArt string, outputPath string) error {
-	lines := strings.Split(asciiArt, "\n")
-
-	// Calculate the dimensions of the image
-	imgWidth := fontWidth * (len(lines[0]) - 1)
+	imgWidth := fontWidth * maxLineLength
 	imgHeight := fontHeight * len(lines)
 
 	// Create a new RGBA image
 	img := image.NewRGBA(image.Rect(0, 0, imgWidth, imgHeight))
 
-	// Fill the image with white background
-	// Shouldn't it be better to not have a background since it's a PNG?
-	// Right now same color as website
-	white := color.RGBA{26, 26, 26, 255}
-	draw.Draw(img, img.Bounds(), &image.Uniform{white}, image.Point{}, draw.Src)
+	// Fill the image with a black background
+	black := color.RGBA{0, 0, 0, 255}
+	draw.Draw(img, img.Bounds(), &image.Uniform{black}, image.Point{}, draw.Src)
 
 	// Draw the ASCII text onto the image
-	black := color.RGBA{255, 255, 255, 255}
-
 	for y, line := range lines {
 		for x, ch := range line {
-			drawChar(img, black, x*fontWidth, (y+1)*fontHeight, string(ch))
+			var textColor color.RGBA
+			if preserveColor {
+				textColor = parseColor(x, y, lines)
+			} else {
+				textColor = color.RGBA{255, 255, 255, 255} // White text for non-colored output
+			}
+			drawChar(img, textColor, x*fontWidth, (y+1)*fontHeight, string(ch))
 		}
 	}
 
-	// Save the image as PNG or JPEG
+	// Save the image as PNG
 	outFile, err := os.Create(outputPath)
 	if err != nil {
 		return err
 	}
 	defer outFile.Close()
 
-	if strings.HasSuffix(outputPath, ".png") {
-		err = png.Encode(outFile, img)
-	} else if strings.HasSuffix(outputPath, ".jpg") || strings.HasSuffix(outputPath, ".jpeg") {
-		err = jpeg.Encode(outFile, img, nil)
-	} else {
-		return fmt.Errorf("unsupported file format")
+	return png.Encode(outFile, img)
+}
+
+func parseColor(x, y int, lines []string) color.RGBA {
+	// Extract color from the x-char tag
+	line := lines[y]
+	startTag := strings.LastIndex(line[:x], "<x-char style=\"color:")
+	if startTag == -1 {
+		return color.RGBA{255, 255, 255, 255} // Default to white if no color found
+	}
+	endTag := strings.Index(line[startTag:], "\">")
+	if endTag == -1 {
+		return color.RGBA{255, 255, 255, 255} // Default to white if no color found
+	}
+	colorStr := line[startTag+len("<x-char style=\"color:") : startTag+endTag]
+
+	// Parse the hex color
+	colorValue, err := strconv.ParseUint(colorStr[1:], 16, 32)
+	if err != nil {
+		return color.RGBA{255, 255, 255, 255} // Default to white if parsing fails
 	}
 
-	return err
+	return color.RGBA{
+		R: uint8((colorValue >> 16) & 0xFF),
+		G: uint8((colorValue >> 8) & 0xFF),
+		B: uint8(colorValue & 0xFF),
+		A: 255,
+	}
 }
 
 // Draws a character on the image at the specified position

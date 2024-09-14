@@ -13,6 +13,10 @@ templ Home(title string) {
         <!-- Form to upload an image and generate ASCII -->
         <form hx-post="/convert-to-ascii" hx-target="#output" enctype="multipart/form-data">
             <input type="file" id="image" name="image" accept="image/*" alt="Upload image for ASCII conversion" required>
+            <label>
+                <input type="checkbox" name="preserve_color">
+                Preserve original colors
+            </label>
             <button id="clear-button">Clear Image</button>
             <button type="submit">Generate ASCII</button>
         </form>

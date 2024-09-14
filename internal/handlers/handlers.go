@@ -3,12 +3,13 @@ package handlers
 import (
 	"ascii-converter/internal/ascii"
 	"ascii-converter/internal/templates"
+	"encoding/base64"
 	"fmt"
-	"html"
 	"io"
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 const maxMemory = 10 << 20 // 10 MB
@@ -20,14 +21,12 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 
 // Handles the form submission to display ASCII art and the download button
 func ConvertImageHandler(w http.ResponseWriter, r *http.Request) {
-	// Parse the form data
 	if err := r.ParseMultipartForm(maxMemory); err != nil {
 		http.Error(w, "Unable to parse the form", http.StatusInternalServerError)
 		fmt.Println(err)
 		return
 	}
 
-	// Get the uploaded file
 	file, _, err := r.FormFile("image")
 	if err != nil {
 		http.Error(w, "Unable to get the image", http.StatusInternalServerError)
@@ -36,7 +35,6 @@ func ConvertImageHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	// Read the file data
 	imageBytes, err := io.ReadAll(file)
 	if err != nil {
 		http.Error(w, "Unable to read the image", http.StatusInternalServerError)
@@ -44,38 +42,65 @@ func ConvertImageHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Convert the image to ASCII
-	asciiResult, err := ascii.ConvertImage(imageBytes)
+	preserveColor := r.FormValue("preserve_color") == "on"
+
+	coloredAscii, err := ascii.ConvertImage(imageBytes, true)
 	if err != nil {
 		http.Error(w, "Unable to convert the image", http.StatusInternalServerError)
 		fmt.Println(err)
 		return
 	}
 
-	// Return ASCII art with a download button
+	plainAscii, err := ascii.ConvertImage(imageBytes, false)
+	if err != nil {
+		http.Error(w, "Unable to convert the image", http.StatusInternalServerError)
+		fmt.Println(err)
+		return
+	}
+
+	// Remove HTML tags from plainAscii
+	plainAscii = strings.ReplaceAll(plainAscii, "<x-char style=\"color:#000000\">", "")
+	plainAscii = strings.ReplaceAll(plainAscii, "</x-char>", "")
+
+	displayAscii := plainAscii
+	if preserveColor {
+		displayAscii = coloredAscii
+	}
+
 	w.Header().Set("Content-Type", "text/html")
 	fmt.Fprintf(w, `
 		<pre>%s</pre>
 		<form action="/convert-to-image" method="POST">
 			<input type="hidden" name="ascii-art" value="%s" />
+			<input type="hidden" name="preserve_color" value="%t" />
 			<button type="submit">Download as Image</button>
 		</form>
-	`, html.EscapeString(asciiResult), html.EscapeString(asciiResult))
+	`, displayAscii, base64.StdEncoding.EncodeToString([]byte(plainAscii)), preserveColor)
 }
 
 // Handles ASCII to image conversion and serves the download
 func ConvertAsciiToImageHandler(w http.ResponseWriter, r *http.Request) {
-	asciiArt := r.FormValue("ascii-art")
-	if asciiArt == "" {
+	asciiArtBase64 := r.FormValue("ascii-art")
+	if asciiArtBase64 == "" {
 		http.Error(w, "Missing ASCII art input", http.StatusBadRequest)
 		return
 	}
+
+	preserveColor := r.FormValue("preserve_color") == "on"
+
+	asciiArtBytes, err := base64.StdEncoding.DecodeString(asciiArtBase64)
+	if err != nil {
+		http.Error(w, "Invalid ASCII art input", http.StatusBadRequest)
+		return
+	}
+
+	asciiArt := string(asciiArtBytes)
 
 	// Define the output path for the generated image
 	outputFile := filepath.Join(os.TempDir(), "ascii_image.png")
 
 	// Convert ASCII to image and save it
-	err := ascii.ConvertAsciiToImage(asciiArt, outputFile)
+	err = ascii.ConvertAsciiToImage(asciiArt, outputFile, preserveColor)
 	if err != nil {
 		http.Error(w, "Error generating image", http.StatusInternalServerError)
 		return

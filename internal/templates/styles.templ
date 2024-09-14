@@ -79,6 +79,9 @@ templ Styles() {
 
         #output-container {
             width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            overflow: hidden;
         }
 
         #output {
@@ -87,7 +90,7 @@ templ Styles() {
             background-color: #1a1a1a;
             border-radius: 8px;
             white-space: pre;
-            word-wrap: break-word;
+            word-wrap: normal;
             border: 1px solid #333;
             font-family: monospace;
             font-size: 2.5px;
@@ -98,6 +101,7 @@ templ Styles() {
             align-items: center;
             justify-content: center;
             overflow-x: auto;
+            line-height: 1;
         }
 
         footer {
