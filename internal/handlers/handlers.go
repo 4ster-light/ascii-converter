@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 const maxMemory = 10 << 20 // 10 MB
@@ -51,6 +52,11 @@ func ConvertImageHandler(w http.ResponseWriter, r *http.Request) {
 		display, err = ascii.ConvertImage(imageBytes, false)
 	}
 
+	plain := display
+	if preserveColor {
+		plain, err = ascii.ConvertImage(imageBytes, false)
+	}
+
 	if err != nil {
 		http.Error(w, "Unable to convert the image", http.StatusInternalServerError)
 		fmt.Println(err)
@@ -58,9 +64,9 @@ func ConvertImageHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Remove HTML tags from plainAscii
-	// not sure you need this though, works fine without too
-	// plainAscii = strings.ReplaceAll(plainAscii, "<x-char style=\"color:#000000\">", "")
-	// plainAscii = strings.ReplaceAll(plainAscii, "</x-char>", "")
+
+	plain = strings.ReplaceAll(plain, "<x-char style=\"color:#000000\">", "")
+	plain = strings.ReplaceAll(plain, "</x-char>", "")
 
 	w.Header().Set("Content-Type", "text/html")
 	fmt.Fprintf(w, `
@@ -70,7 +76,7 @@ func ConvertImageHandler(w http.ResponseWriter, r *http.Request) {
 			<input type="hidden" name="preserve_color" value="%t" />
 			<button type="submit">Download as Image</button>
 		</form>
-	`, display, base64.StdEncoding.EncodeToString([]byte(display)), preserveColor)
+	`, display, base64.StdEncoding.EncodeToString([]byte(plain)), preserveColor)
 }
 
 // Handles ASCII to image conversion and serves the download
