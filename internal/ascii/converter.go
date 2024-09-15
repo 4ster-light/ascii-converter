@@ -11,6 +11,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/nfnt/resize"
 	"golang.org/x/image/font"
@@ -18,6 +19,12 @@ import (
 	"golang.org/x/image/math/fixed"
 	"golang.org/x/image/webp"
 )
+
+type convert struct {
+	Color bool
+	Wg    sync.WaitGroup
+	Mx    sync.Mutex
+}
 
 const (
 	asciiChars = "`.',-~:;=+*#%@M" // ASCII characters to use for the image rendering
@@ -33,8 +40,9 @@ func ConvertImage(imageBytes []byte, preserveColor bool) (string, error) {
 		return "", err
 	}
 
+	c := convert{preserveColor, sync.WaitGroup{}, sync.Mutex{}}
 	resizedImg := resizeImage(img)
-	asciiArt := convertToAscii(resizedImg, preserveColor)
+	asciiArt := c.ToAscii(resizedImg)
 
 	return asciiArt, nil
 }
@@ -88,30 +96,39 @@ func resizeImage(img image.Image) image.Image {
 	return resize.Resize(uint(width), uint(height), img, resize.Lanczos3)
 }
 
-// convertToAscii converts an image to ASCII characters
-func convertToAscii(img image.Image, preserveColor bool) string {
+// ToAscii converts an image to ASCII characters
+func (conv *convert) ToAscii(img image.Image) string {
 	bounds := img.Bounds()
-	var sb strings.Builder
+	out := make([]string, bounds.Dy())
 
 	for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
-		for x := bounds.Min.X; x < bounds.Max.X; x++ {
-			c := img.At(x, y)
-			grayColor := color.GrayModel.Convert(c).(color.Gray)
-			asciiIndex := int(grayColor.Y) * (len(asciiChars) - 1) / 255
-			char := string(asciiChars[asciiIndex])
+		conv.Wg.Add(1)
+		go func(y int) {
+			defer conv.Wg.Done()
 
-			if preserveColor {
-				r, g, b, _ := c.RGBA()
-				hexColor := fmt.Sprintf("#%02X%02X%02X", r>>8, g>>8, b>>8)
-				sb.WriteString(fmt.Sprintf("<x-char style=\"color:%s\">%s</x-char>", hexColor, char))
-			} else {
-				sb.WriteString(char)
+			var str string
+			for x := bounds.Min.X; x < bounds.Max.X; x++ {
+				c := img.At(x, y)
+				grayColor := color.GrayModel.Convert(c).(color.Gray)
+				asciiIndex := int(grayColor.Y) * (len(asciiChars) - 1) / 255
+				char := string(asciiChars[asciiIndex])
+
+				if conv.Color {
+					r, g, b, _ := c.RGBA()
+					hexColor := fmt.Sprintf("#%02X%02X%02X", r>>8, g>>8, b>>8)
+					char = fmt.Sprintf("<x-char style=\"color:%s\">%s</x-char>", hexColor, char)
+					// char = fmt.Sprintf("%s%s<", hexColor, char)
+				}
+				str += char
 			}
-		}
-		sb.WriteByte('\n')
+			// conv.Mx.Lock()
+			out[y] = str
+			// conv.Mx.Unlock()
+		}(y)
 	}
+	conv.Wg.Wait()
 
-	return sb.String()
+	return strings.Join(out, "\n")
 }
 
 // Convert ASCII art to an image
