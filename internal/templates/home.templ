@@ -4,10 +4,15 @@ templ Home(title string) {
 	@Base(title) {
 		<section>
             <h1>Welcome to my ASCII art generator</h1>
-            <p>This is a simple website to convert images to ASCII art.</p>
-            <p>It allows you to upload an image and convert it to an ASCII text format.</p>
+            <p>This is a simple website to convert images to ASCII art. It allows you to upload an image and convert it to an ASCII text format.</p>
             <p>At the moment, it supports common image formats like PNG, JPEG, JPG, and WEBP.</p>
-            <p>The output is black and white text at the moment. <span style="color: #ff6600;">Now you can download as a PNG image too!!!</span>.</p>
+            <p>The output is black and white text at the moment. Now you can download as a PNG image too!!!</p>
+            <p style="color: #ff6600;">EXPERIMENTAL FEATURE: You can preserve the colour of the original image but:</p>
+            <ul>
+                <li>It may stress some computers hardware.</li>
+                <li>It will take longer to generate the ASCII art.</li>
+                <li>When downloading as image it will still be black and white.</li>
+            </ul>
         </section>
 
         <!-- Form to upload an image and generate ASCII -->

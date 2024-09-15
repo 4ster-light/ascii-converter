@@ -55,7 +55,7 @@ func Base(title string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</main><footer><p>Made by David Vivar Bogónez, aka: Aster</p><ul><li><a href=\"https://twitter.com/4ster_light\">Twitter/X</a></li>| <li><a href=\"https://github.com/07devAdvb/ascii-converter\">GitHub</a></li>|<li><a href=\"https://ablaze-event-180.notion.site/ster-6f20e558600342f39802d42c5d63fe48\">My Personal Website</a></li></ul></footer></body></html>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</main><footer><p>Made by David Vivar Bogónez, aka: Aster</p><ul class=\"social\"><li><a href=\"https://twitter.com/4ster_light\">Twitter/X</a></li>| <li><a href=\"https://github.com/07devAdvb/ascii-converter\">GitHub</a></li>|<li><a href=\"https://ablaze-event-180.notion.site/ster-6f20e558600342f39802d42c5d63fe48\">My Personal Website</a></li></ul></footer></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
