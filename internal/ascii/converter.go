@@ -20,7 +20,7 @@ import (
 )
 
 const (
-	asciiChars = "`.',-~:;=+*#%@M" // ASCII characters to use for the image rendering
+	asciiChars = " `.',-~:;=+*#%@M" // ASCII characters to use for the image rendering
 	width      = 500               // Width of the ASCII art in characters
 	fontWidth  = 7                 // Width of each character in the font
 	fontHeight = 13                // Height of each character in the font
@@ -88,19 +88,26 @@ func resizeImage(img image.Image) image.Image {
 	return resize.Resize(uint(width), uint(height), img, resize.Lanczos3)
 }
 
+func convertToGrayScale(img image.Image) *image.Gray {
+	bounds := img.Bounds()
+	grayImg := image.NewGray(bounds)
+	draw.Draw(grayImg, bounds, img, bounds.Min, draw.Over)
+	return grayImg
+}
+
 // convertToAscii converts an image to ASCII characters
 func convertToAscii(img image.Image, preserveColor bool) string {
 	bounds := img.Bounds()
+	grayImg := convertToGrayScale(img)
 	var sb strings.Builder
 
 	for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
 		for x := bounds.Min.X; x < bounds.Max.X; x++ {
-			c := img.At(x, y)
-			grayColor := color.GrayModel.Convert(c).(color.Gray)
+			grayColor := grayImg.At(x, y).(color.Gray)
 			asciiIndex := int(grayColor.Y) * (len(asciiChars) - 1) / 255
 			char := string(asciiChars[asciiIndex])
-
 			if preserveColor {
+				c := img.At(x, y)
 				r, g, b, _ := c.RGBA()
 				hexColor := fmt.Sprintf("#%02X%02X%02X", r>>8, g>>8, b>>8)
 				sb.WriteString(fmt.Sprintf("<x-char style=\"color:%s\">%s</x-char>", hexColor, char))
