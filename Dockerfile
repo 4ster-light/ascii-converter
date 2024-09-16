@@ -1,10 +1,16 @@
 FROM golang:1.23-alpine3.20
-RUN apk update && apk upgrade
-RUN apk add --no-cache gcc musl-dev
-RUN apk --no-cache add ca-certificates wget bash xz-libs
+
+RUN apk --no-cache add \
+  gcc \
+  musl-dev \
+  ca-certificates \
+  wget \
+  bash \
+  xz-libs \
+  && apk --no-cache upgrade
+
 WORKDIR /app
 COPY go.mod go.sum ./
-COPY go.sum ./
 RUN go mod download
 COPY . .
 
