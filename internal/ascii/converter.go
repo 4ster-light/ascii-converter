@@ -24,7 +24,33 @@ const (
 	width      = 500               // Width of the ASCII art in characters
 	fontWidth  = 7                 // Width of each character in the font
 	fontHeight = 13                // Height of each character in the font
+
+	FormatJPEG = "jpeg"
+	FormatPNG = "png"
+	FormatWEBP = "webp"
 )
+
+// Map image formats to detect functions
+var detectFuncMap = map[string]func([]byte) bool{
+	FormatJPEG: isJPEG,
+	FormatPNG:  isPNG,
+	FormatWEBP: isWEBP,
+}
+
+// Detects if the byte slice is a JPEG image
+func isJPEG(imageBytes []byte) bool {
+	return bytes.HasPrefix(imageBytes, []byte("\xFF\xD8\xFF"))
+}
+
+// Detects if the byte slice is a PNG image
+func isPNG(imageBytes []byte) bool {
+	return bytes.HasPrefix(imageBytes, []byte("\x89PNG\r\n\x1a\n"))
+}
+
+// Detects if the byte slice is a WEBP image
+func isWEBP(imageBytes []byte) bool {
+	return bytes.HasPrefix(imageBytes, []byte("RIFF")) && bytes.Contains(imageBytes[8:16], []byte("WEBP"))
+}
 
 // ConvertImage converts an image byte slice to ASCII art
 func ConvertImage(imageBytes []byte, preserveColor bool) (string, error) {
@@ -39,6 +65,13 @@ func ConvertImage(imageBytes []byte, preserveColor bool) (string, error) {
 	return asciiArt, nil
 }
 
+// Map image formats to decode functions
+var decodeFuncMap = map[string]func(*bytes.Reader) (image.Image, error){
+	FormatJPEG: func(r *bytes.Reader) (image.Image, error) { return jpeg.Decode(r) },
+	FormatPNG:  func(r *bytes.Reader) (image.Image, error) { return png.Decode(r) },
+	FormatWEBP: func(r *bytes.Reader) (image.Image, error) { return webp.Decode(r) },
+}
+
 // decodeImage detects the image format and decodes it
 func decodeImage(imageBytes []byte) (image.Image, error) {
 	format, err := detectImageFormat(imageBytes)
@@ -46,20 +79,14 @@ func decodeImage(imageBytes []byte) (image.Image, error) {
 		return nil, fmt.Errorf("failed to detect image format: %w", err)
 	}
 
-	reader := bytes.NewReader(imageBytes)
-	var img image.Image
-
-	switch format {
-	case "jpeg":
-		img, err = jpeg.Decode(reader)
-	case "png":
-		img, err = png.Decode(reader)
-	case "webp":
-		img, err = webp.Decode(reader)
-	default:
+	decodeFunc, found := decodeFuncMap[format]
+	if !found {
 		return nil, fmt.Errorf("unsupported image format: %s", format)
 	}
 
+	reader := bytes.NewReader(imageBytes)
+
+	img, err := decodeFunc(reader)
 	if err != nil {
 		return nil, fmt.Errorf("failed to decode image: %w", err)
 	}
@@ -69,16 +96,12 @@ func decodeImage(imageBytes []byte) (image.Image, error) {
 
 // detectImageFormat determines the format of the image based on its byte signature
 func detectImageFormat(imageBytes []byte) (string, error) {
-	switch {
-	case bytes.HasPrefix(imageBytes, []byte("\xFF\xD8\xFF")):
-		return "jpeg", nil
-	case bytes.HasPrefix(imageBytes, []byte("\x89PNG\r\n\x1a\n")):
-		return "png", nil
-	case bytes.HasPrefix(imageBytes, []byte("RIFF")) && bytes.Contains(imageBytes[8:16], []byte("WEBP")):
-		return "webp", nil
-	default:
-		return "", fmt.Errorf("unsupported image format")
+	for format, detectFunc := range detectFuncMap {
+		if detectFunc(imageBytes){
+			return format, nil
+		}
 	}
+	return "", fmt.Errorf("unsupported image format")
 }
 
 // resizeImage resizes the input image while maintaining aspect ratio
