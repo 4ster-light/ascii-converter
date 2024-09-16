@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
+	"regexp"
 )
 
 const maxMemory = 10 << 20 // 10 MB
@@ -44,27 +44,18 @@ func ConvertImageHandler(w http.ResponseWriter, r *http.Request) {
 
 	preserveColor := r.FormValue("preserve_color") == "on"
 
-	coloredAscii, err := ascii.ConvertImage(imageBytes, true)
+	displayAscii, err := ascii.ConvertImage(imageBytes, preserveColor)
 	if err != nil {
 		http.Error(w, "Unable to convert the image", http.StatusInternalServerError)
 		fmt.Println(err)
 		return
 	}
 
-	plainAscii, err := ascii.ConvertImage(imageBytes, false)
-	if err != nil {
-		http.Error(w, "Unable to convert the image", http.StatusInternalServerError)
-		fmt.Println(err)
-		return
-	}
+	// Remove HTML tags from ascii
+	plainAscii := regexp.MustCompile(`<x-char style="color:#([0-9a-fA-F]{6})">|</x-char>`).ReplaceAllString(displayAscii, "")
 
-	// Remove HTML tags from plainAscii
-	plainAscii = strings.ReplaceAll(plainAscii, "<x-char style=\"color:#000000\">", "")
-	plainAscii = strings.ReplaceAll(plainAscii, "</x-char>", "")
-
-	displayAscii := plainAscii
-	if preserveColor {
-		displayAscii = coloredAscii
+	if !preserveColor {
+		displayAscii = plainAscii
 	}
 
 	w.Header().Set("Content-Type", "text/html")
