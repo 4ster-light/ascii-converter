@@ -76,7 +76,7 @@ func ConvertImageHandler(w http.ResponseWriter, r *http.Request) {
 			<input type="hidden" name="preserve_color" value="%t" />
 			<button type="submit">Download as Image</button>
 		</form>
-	`, display, base64.StdEncoding.EncodeToString([]byte(plain)), preserveColor)
+	`, display, base64.StdEncoding.EncodeToString([]byte(display)), preserveColor)
 }
 
 // Handles ASCII to image conversion and serves the download

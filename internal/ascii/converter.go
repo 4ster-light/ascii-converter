@@ -118,6 +118,9 @@ func (conv *convert) ToAscii(img image.Image) string {
 					hexColor := fmt.Sprintf("#%02X%02X%02X", r>>8, g>>8, b>>8)
 					char = fmt.Sprintf("<x-char style=\"color:%s\">%s</x-char>", hexColor, char)
 					// char = fmt.Sprintf("%s%s<", hexColor, char)
+				} else {
+					hexColor := "#FFFFFF"
+					char = fmt.Sprintf("<x-char style=\"color:%s\">%s</x-char>", hexColor, char)
 				}
 				str += char
 			}
@@ -155,15 +158,25 @@ func ConvertAsciiToImage(asciiArt string, outputPath string, preserveColor bool)
 
 	// Draw the ASCII text onto the image
 	for y, line := range lines {
-		for x, ch := range line {
-			var textColor color.RGBA
-			if preserveColor {
-				textColor = parseColor(x, y, lines)
-			} else {
-				textColor = color.RGBA{255, 255, 255, 255} // White text for non-colored output
-			}
-			drawChar(img, textColor, x*fontWidth, (y+1)*fontHeight, string(ch))
+		subline := strings.Split(line, "<x-char")
+		t := 0
+		for _, tagged := range subline[1:] {
+			tagged = "<x-char" + tagged
+			textColor := parseColor(tagged)
+
+			symbol := string(tagged[len(tagged)-9])
+			drawChar(img, textColor, t*fontWidth, (y+1)*fontHeight, symbol)
+			t += 1
 		}
+		// for x, ch := range line {
+		// 	var textColor color.RGBA
+		// 	if preserveColor {
+		// 		textColor = parseColor(x, y, lines)
+		// 	} else {
+		// 		textColor = color.RGBA{255, 255, 255, 255} // White text for non-colored output
+		// 	}
+		// 	drawChar(img, textColor, x*fontWidth, (y+1)*fontHeight, string(ch))
+		// }
 	}
 
 	// Save the image as PNG
@@ -176,21 +189,12 @@ func ConvertAsciiToImage(asciiArt string, outputPath string, preserveColor bool)
 	return png.Encode(outFile, img)
 }
 
-func parseColor(x, y int, lines []string) color.RGBA {
-	// Extract color from the x-char tag
-	line := lines[y]
-	startTag := strings.LastIndex(line[:x], "<x-char style=\"color:")
-	if startTag == -1 {
-		return color.RGBA{255, 255, 255, 255} // Default to white if no color found
-	}
-	endTag := strings.Index(line[startTag:], "\">")
-	if endTag == -1 {
-		return color.RGBA{255, 255, 255, 255} // Default to white if no color found
-	}
-	colorStr := line[startTag+len("<x-char style=\"color:") : startTag+endTag]
-
+func parseColor(line string) color.RGBA {
+	fmt.Println(line)
 	// Parse the hex color
-	colorValue, err := strconv.ParseUint(colorStr[1:], 16, 32)
+	clr := line[14:22]
+	fmt.Println(clr)
+	colorValue, err := strconv.ParseUint(clr, 16, 32)
 	if err != nil {
 		return color.RGBA{255, 255, 255, 255} // Default to white if parsing fails
 	}
