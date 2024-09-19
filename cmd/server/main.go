@@ -12,16 +12,16 @@ import (
 )
 
 func main() {
-	r := chi.NewRouter()
+	router := chi.NewRouter()
 
 	// Middlewares
-	r.Use(middleware.Logger)
-	r.Use(middleware.Recoverer)
+	router.Use(middleware.Logger)
+	router.Use(middleware.Recoverer)
 
 	// Routes
-	r.Get("/", handlers.HomeHandler)
-	r.Post("/convert-to-ascii", handlers.ConvertImageHandler)
-	r.Post("/convert-to-image", handlers.ConvertAsciiToImageHandler)
+	router.Get("/", handlers.HomeHandler)
+	router.Post("/convert-to-ascii", handlers.ConvertImageHandler)
+	router.Post("/convert-to-image", handlers.ConvertAsciiToImageHandler)
 
 	// Get the port
 	port := os.Getenv("PORT")
@@ -31,7 +31,7 @@ func main() {
 
 	// Start server
 	log.Printf("Starting server on: http://localhost:%s", port)
-	if err := http.ListenAndServe(":"+port, r); err != nil {
+	if err := http.ListenAndServe(":"+port, router); err != nil {
 		log.Fatal(err)
 	}
 }

@@ -1,6 +1,7 @@
 # ASCII-Art generator
 This is a simple website that generates ASCII art from a provided image.
 [Check it out here](https://artscii.onrender.com/)
+[And also here a landing page](https://ablaze-event-180.notion.site/ArtSCII-1010169a6c908021a1e9fbb51bcb16d7)
 
 ## The technology used to build this website is:
 - **[Go](https://golang.org/)**: A programming language created at Google.
@@ -35,3 +36,4 @@ make run
 go run ./cmd/server/main.go
 ```
 4. Open your browser and navigate to `http://localhost:8080`.
+
