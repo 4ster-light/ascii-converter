@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: ascii-converter
+    env: go
+    buildCommand: go build -o ascii-converter ./cmd/server
+    startCommand: ./ascii-converter
+    envVars:
+      - key: PORT
+        value: 8080
