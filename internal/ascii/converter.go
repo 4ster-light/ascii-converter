@@ -27,10 +27,11 @@ type convert struct {
 }
 
 const (
-	asciiChars = "`.',-~:;=+*#%@M" // ASCII characters to use for the image rendering
-	width      = 500               // Width of the ASCII art in characters
-	fontWidth  = 7                 // Width of each character in the font
-	fontHeight = 13                // Height of each character in the font
+	asciiChars = "`.',-~:;=+*#%@M"                     // ASCII characters to use for the image rendering
+	width      = 500                                   // Width of the ASCII art in characters
+	fontWidth  = 7                                     // Width of each character in the font
+	fontHeight = 13                                    // Height of each character in the font
+	fontRatio = float64(fontWidth)/float64(fontHeight) // Font aspect ratio
 )
 
 // ConvertImage converts an image byte slice to ASCII art
@@ -92,8 +93,9 @@ func detectImageFormat(imageBytes []byte) (string, error) {
 // resizeImage resizes the input image while maintaining aspect ratio
 func resizeImage(img image.Image) image.Image {
 	ratio := float64(img.Bounds().Dy()) / float64(img.Bounds().Dx())
-	height := int(float64(width) * ratio * 0.5)
-	return resize.Resize(uint(width), uint(height), img, resize.Lanczos3)
+	resizedHeight := uint(float64(width) * ratio * fontRatio)
+	resizedWidth := uint(width)
+	return resize.Resize(resizedWidth, resizedHeight, img, resize.Lanczos3)
 }
 
 // ToAscii converts an image to ASCII characters
