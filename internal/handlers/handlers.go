@@ -44,14 +44,19 @@ func ConvertImageHandler(w http.ResponseWriter, r *http.Request) {
 
 	preserveColor := r.FormValue("preserve_color") == "on"
 
-	coloredAscii, err := ascii.ConvertImage(imageBytes, true)
-	if err != nil {
-		http.Error(w, "Unable to convert the image", http.StatusInternalServerError)
-		fmt.Println(err)
-		return
+	var display string
+
+	if preserveColor {
+		display, err = ascii.ConvertImage(imageBytes, true)
+	} else {
+		display, err = ascii.ConvertImage(imageBytes, false)
 	}
 
-	plainAscii, err := ascii.ConvertImage(imageBytes, false)
+	plain := display
+	if preserveColor {
+		plain, err = ascii.ConvertImage(imageBytes, false)
+	}
+
 	if err != nil {
 		http.Error(w, "Unable to convert the image", http.StatusInternalServerError)
 		fmt.Println(err)
@@ -59,13 +64,9 @@ func ConvertImageHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Remove HTML tags from plainAscii
-	plainAscii = strings.ReplaceAll(plainAscii, "<x-char style=\"color:#000000\">", "")
-	plainAscii = strings.ReplaceAll(plainAscii, "</x-char>", "")
 
-	displayAscii := plainAscii
-	if preserveColor {
-		displayAscii = coloredAscii
-	}
+	plain = strings.ReplaceAll(plain, "<x-char style=\"color:#000000\">", "")
+	plain = strings.ReplaceAll(plain, "</x-char>", "")
 
 	w.Header().Set("Content-Type", "text/html")
 	fmt.Fprintf(w, `
@@ -75,7 +76,7 @@ func ConvertImageHandler(w http.ResponseWriter, r *http.Request) {
 			<input type="hidden" name="preserve_color" value="%t" />
 			<button type="submit">Download as Image</button>
 		</form>
-	`, displayAscii, base64.StdEncoding.EncodeToString([]byte(plainAscii)), preserveColor)
+	`, display, base64.StdEncoding.EncodeToString([]byte(display)), preserveColor)
 }
 
 // Handles ASCII to image conversion and serves the download
