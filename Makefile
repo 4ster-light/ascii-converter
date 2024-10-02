@@ -5,9 +5,11 @@ SRC_DIR=./backend/server
 FRONTEND_DIR=./frontend
 FRONTEND_BUILD_DIR=$(FRONTEND_DIR)/dist
 
-all: ./build.sh
+all:
+	./build.sh
 
-run: ./build.sh
+run:
+	./build.sh
 	@echo "Running the project..."
 	$(BUILD_DIR)/$(BINARY_NAME)
 
@@ -24,4 +26,4 @@ deps:
 	@echo "Updating dependencies..."
 	go mod tidy
 
-.PHONY: all build run clean fmt deps
+.PHONY: all run clean fmt deps
