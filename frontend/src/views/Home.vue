@@ -1,16 +1,7 @@
 <template>
     <div class="min-h-screen p-8 bg-orange-50 dark:bg-black text-gray-800 dark:text-orange-200">
         <div class="max-w-4xl mx-auto">
-            <header class="flex justify-between items-center mb-12">
-                <h1 class="text-5xl font-bold text-orange-500">
-                    ✰ArtSCII✰
-                </h1>
-                <button @click="toggleDarkMode"
-                    class="p-2 rounded-full bg-orange-400 dark:bg-gray-800 text-black dark:text-orange-400">
-                    <Sun v-if="isDarkMode" :size="24" />
-                    <Moon v-else :size="24" />
-                </button>
-            </header>
+            <Header />
 
             <main
                 class="rounded-lg shadow-lg p-8 bg-gradient-to-br from-orange-100 to-orange-200 dark:from-gray-900 dark:to-black">
@@ -70,56 +61,19 @@
                 <div class="h-32 rounded bg-white dark:bg-black border border-orange-300 dark:border-orange-700"></div>
             </main>
 
-            <footer class="mt-8 text-center">
-                <p class="mb-4">Made by David Vivar Bogoñez, aka: Aster</p>
-                <div class="flex justify-center space-x-4">
-                    <a href="#" class="text-orange-500 hover:text-orange-600">
-                        <Twitter />
-                    </a>
-                    <a href="#" class="text-orange-500 hover:text-orange-600">
-                        <Github />
-                    </a>
-                    <a href="#" class="text-orange-500 hover:text-orange-600">
-                        <Globe />
-                    </a>
-                </div>
-            </footer>
+            <Footer />
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { Upload, Twitter, Github, Globe, Sun, Moon } from 'lucide-vue-next';
+import { ref } from 'vue';
+import { Upload } from 'lucide-vue-next';
+import Header from '../components/Header.vue';
+import Footer from '../components/Footer.vue'
 
-const isDarkMode = ref(false);
-const preserveColors = ref(false);
 const fileName = ref('');
-
-onMounted(() => {
-    // Check system preference on mount
-    isDarkMode.value = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    applyDarkMode();
-
-    // Listen for changes in system preference
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-        isDarkMode.value = e.matches;
-        applyDarkMode();
-    });
-});
-
-const toggleDarkMode = () => {
-    isDarkMode.value = !isDarkMode.value;
-    applyDarkMode();
-};
-
-const applyDarkMode = () => {
-    if (isDarkMode.value) {
-        document.documentElement.classList.add('dark');
-    } else {
-        document.documentElement.classList.remove('dark');
-    }
-};
+const preserveColors = ref(false);
 
 const handleFileUpload = (event: Event) => {
     const file = (event.target as HTMLInputElement).files![0];
