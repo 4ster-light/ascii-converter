@@ -1,16 +1,3 @@
-<template>
-    <header class="flex justify-between items-center mb-12">
-        <h1 class="text-5xl font-bold text-orange-500">
-            ✰ArtSCII✰
-        </h1>
-        <button @click="toggleDarkMode"
-            class="p-2 rounded-full bg-orange-400 dark:bg-gray-800 text-black dark:text-orange-400">
-            <Sun v-if="isDarkMode" :size="24" />
-            <Moon v-else :size="24" />
-        </button>
-    </header>
-</template>
-
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { Sun, Moon } from 'lucide-vue-next';
@@ -42,3 +29,16 @@ const applyDarkMode = () => {
     }
 };
 </script>
+
+<template>
+    <header class="flex justify-between items-center mb-12">
+        <h1 class="text-5xl font-bold text-orange-500">
+            ✰ArtSCII✰
+        </h1>
+        <button @click="toggleDarkMode"
+            class="p-2 rounded-full bg-orange-400 dark:bg-gray-800 text-black dark:text-orange-400">
+            <Sun v-if="isDarkMode" :size="24" />
+            <Moon v-else :size="24" />
+        </button>
+    </header>
+</template>

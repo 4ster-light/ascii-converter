@@ -2,8 +2,5 @@
 </script>
 
 <template>
-    <h1 class="text-6xl text-orange-600 font-bold">About</h1>
+    <p>About</p>
 </template>
-
-<style scoped>
-</style>

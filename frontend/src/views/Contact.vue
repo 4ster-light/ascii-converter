@@ -2,8 +2,5 @@
 </script>
 
 <template>
-    <h1 class="text-6xl text-orange-600 font-bold">Contact</h1>
+    <p>Contact</p>
 </template>
-
-<style scoped>
-</style>

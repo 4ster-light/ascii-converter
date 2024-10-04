@@ -24,7 +24,7 @@ func main() {
 
 	// Routes
 	router.Get("/", handlers.HomeHandler)
-	router.Post("/convert-to-ascii", handlers.ConvertImageHandler)
+	router.Post("/convert-to-ascii", handlers.ConvertToImageHandler)
 	router.Post("/convert-to-image", handlers.ConvertAsciiToImageHandler)
 
 	// Static files
@@ -51,16 +51,17 @@ func fileServer(r chi.Router, path string, root http.FileSystem) {
 		panic("FileServer does not permit any URL parameters.")
 	}
 
-	if path != "/" && path[len(path)-1] != '/' {
-		r.Get(path, http.RedirectHandler(path+"/", http.StatusMovedPermanently).ServeHTTP)
-		path += "/"
-	}
-	path += "*"
-
-	r.Get(path, func(w http.ResponseWriter, r *http.Request) {
-		rctx := chi.RouteContext(r.Context())
-		pathPrefix := strings.TrimSuffix(rctx.RoutePattern(), "/*")
-		fs := http.StripPrefix(pathPrefix, http.FileServer(root))
+	// Serve static files
+	fs := http.StripPrefix(path, http.FileServer(root))
+	r.Get(path+"*", func(w http.ResponseWriter, r *http.Request) {
+		// Check if the file exists in the static directory
+		if _, err := root.Open(strings.TrimPrefix(r.URL.Path, path)); err != nil {
+			// If not found, serve index.html
+			workDir, _ := os.Getwd() // Get current working directory
+			http.ServeFile(w, r, filepath.Join(workDir, "build/frontend", "index.html"))
+			return
+		}
+		// If file is found, serve it
 		fs.ServeHTTP(w, r)
 	})
 }

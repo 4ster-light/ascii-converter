@@ -22,7 +22,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // Handles the form submission to display ASCII art and the download button
-func ConvertImageHandler(w http.ResponseWriter, r *http.Request) {
+func ConvertToImageHandler(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseMultipartForm(maxMemory); err != nil {
 		http.Error(w, "Unable to parse the form", http.StatusInternalServerError)
 		fmt.Println(err)
