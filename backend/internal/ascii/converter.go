@@ -108,7 +108,7 @@ func (c *convert) toAscii(img image.Image) string {
 	}
 	c.wg.Wait()
 
-	return strings.Join(out, "<br>\n")
+	return strings.Join(out, "<br>")
 }
 
 func (c *convert) processRow(img image.Image, y int, bounds image.Rectangle, outRow *string) {
