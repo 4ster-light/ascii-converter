@@ -91,6 +91,6 @@ const generateAscii = async () => {
     </div>
 
     <div class="rounded bg-white dark:bg-black border border-orange-300 dark:border-orange-700 p-4 flex items-center justify-center">
-        <pre class="w-auto whitespace-pre-wrap text-[2px] bg-black text-white" v-html="output"></pre>
+        <pre class="w-auto whitespace-pre-wrap text-[2px] bg-black text-white font-bold tracking-widest" v-html="output"></pre>
     </div>
 </template>
