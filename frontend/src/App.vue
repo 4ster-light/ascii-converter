@@ -8,7 +8,7 @@ import Footer from './components/Footer.vue';
         <div class="max-w-4xl mx-auto">
             <Header />
             <main
-                class="rounded-lg shadow-lg p-8 bg-gradient-to-br from-orange-200 to-orange-300 dark:from-gray-900 dark:to-black">
+                class="rounded-lg shadow-lg p-8 bg-gradient-to-br from-orange-200 to-orange-300 dark:from-gray-900 dark:to-gray-950">
                 <router-view></router-view>
             </main>
             <Footer />
