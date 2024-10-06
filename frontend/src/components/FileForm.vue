@@ -75,7 +75,7 @@ const generateAscii = async () => {
     </div>
 
     <div class="flex items-center mb-6">
-        <input type="checkbox" id="preserve-colors" v-model="preserveColors" class="mr-2" />
+        <input type="checkbox" disabled id="preserve-colors" v-model="preserveColors" class="mr-2" />
         <label for="preserve-colors" class="text-orange-500 font-bold">Preserve original colors</label>
     </div>
 
