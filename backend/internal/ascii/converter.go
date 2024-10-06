@@ -32,7 +32,7 @@ const (
 type convert struct {
 	preserveColor bool
 	wg            sync.WaitGroup
-	mu            sync.Mutex
+	// mu            sync.Mutex
 }
 
 // ConvertImage converts an image byte slice to ASCII art
@@ -124,7 +124,7 @@ func (c *convert) processRow(img image.Image, y int, bounds image.Rectangle, out
 			hexColor := fmt.Sprintf("#%02X%02X%02X", r>>8, g>>8, b>>8)
 			char = fmt.Sprintf("<x-char style=\"color:%s\">%s</x-char>", hexColor, char)
 		} else {
-			char = fmt.Sprintf("<x-char style=\"color:#FFFFFF\">%s</x-char>", char)
+			char = fmt.Sprintf("<x-char>%s</x-char>", char)
 		}
 		row.WriteString(char)
 	}

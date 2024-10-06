@@ -7,6 +7,13 @@ const preserveColors = ref(false);
 const output = ref('');
 const file = ref<File | null>(null);
 
+const decodeUnicode = (input: string) => {
+    return input
+        .replace(/\\u003c/g, '<')
+        .replace(/\\u003e/g, '>')
+        .replace(/\\u0026/g, '&');
+}
+
 const handleFileUpload = (event: Event) => {
     const uploadedFile = (event.target as HTMLInputElement).files![0];
     file.value = uploadedFile;
@@ -30,7 +37,7 @@ const generateAscii = async () => {
     formData.append('preserve_color', preserveColors.value ? 'on' : 'off');
 
     try {
-        const response = await fetch('/convert-to-image', {
+        const response = await fetch('/convert-to-ascii', {
             method: 'POST',
             body: formData,
         });
@@ -40,6 +47,7 @@ const generateAscii = async () => {
         }
 
         output.value = await response.text();
+        output.value = decodeUnicode(output.value);
     } catch (error) {
         for (let [key, value] of formData.entries()) {
             console.log(key, value);
@@ -82,7 +90,6 @@ const generateAscii = async () => {
         </button>
     </div>
 
-    <div class="rounded bg-white dark:bg-black border border-orange-300 dark:border-orange-700 p-4">
-        <pre class="whitespace-pre-wrap font-mono text-sm" v-html="output"></pre>
-    </div>
+    <pre class="rounded bg-white dark:bg-black border border-orange-300 dark:border-orange-700 p-4 whitespace-pre-wrap text-[1px] overflow-scroll"
+        v-html="output"></pre>
 </template>

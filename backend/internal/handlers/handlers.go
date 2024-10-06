@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"ascii-converter/backend/internal/ascii"
-	"log"
 
 	"encoding/base64"
 	"encoding/json"
@@ -24,8 +23,6 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 
 // Handles the form submission to display ASCII art
 func ConvertToImageHandler(w http.ResponseWriter, r *http.Request) {
-	log.Println("Content-Type:", r.Header.Get("Content-Type"))
-
 	// Parse the form
 	if err := r.ParseMultipartForm(maxMemory); err != nil {
 		http.Error(w, "Unable to parse the form", http.StatusInternalServerError)
