@@ -9,6 +9,7 @@ import (
 	"image/jpeg"
 	"image/png"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -20,35 +21,34 @@ import (
 	"golang.org/x/image/webp"
 )
 
-type convert struct {
-	Color bool
-	Wg    sync.WaitGroup
-	Mx    sync.Mutex
-}
-
 const (
-	asciiChars = "`.',-~:;=+*#%@M"                        // ASCII characters to use for the image rendering
-	width      = 500                                      // Width of the ASCII art in characters
-	fontWidth  = 7                                        // Width of each character in the font
-	fontHeight = 13                                       // Height of each character in the font
-	fontRatio  = float64(fontWidth) / float64(fontHeight) // Font aspect ratio
+	asciiChars = "`.',-~:;=+*#%@M"
+	width      = 500
+	fontWidth  = 7
+	fontHeight = 13
+	fontRatio  = float64(fontWidth) / float64(fontHeight)
 )
+
+type convert struct {
+	preserveColor bool
+	wg            sync.WaitGroup
+	mu            sync.Mutex
+}
 
 // ConvertImage converts an image byte slice to ASCII art
 func ConvertImage(imageBytes []byte, preserveColor bool) (string, error) {
 	img, err := decodeImage(imageBytes)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to decode image: %w", err)
 	}
 
-	c := convert{preserveColor, sync.WaitGroup{}, sync.Mutex{}}
+	c := &convert{preserveColor: preserveColor}
 	resizedImg := resizeImage(img)
-	asciiArt := c.ToAscii(resizedImg)
+	asciiArt := c.toAscii(resizedImg)
 
 	return asciiArt, nil
 }
 
-// decodeImage detects the image format and decodes it
 func decodeImage(imageBytes []byte) (image.Image, error) {
 	format, err := detectImageFormat(imageBytes)
 	if err != nil {
@@ -70,13 +70,12 @@ func decodeImage(imageBytes []byte) (image.Image, error) {
 	}
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to decode image: %w", err)
+		return nil, fmt.Errorf("failed to decode %s image: %w", format, err)
 	}
 
 	return img, nil
 }
 
-// detectImageFormat determines the format of the image based on its byte signature
 func detectImageFormat(imageBytes []byte) (string, error) {
 	switch {
 	case bytes.HasPrefix(imageBytes, []byte("\xFF\xD8\xFF")):
@@ -90,115 +89,115 @@ func detectImageFormat(imageBytes []byte) (string, error) {
 	}
 }
 
-// resizeImage resizes the input image while maintaining aspect ratio
 func resizeImage(img image.Image) image.Image {
 	ratio := float64(img.Bounds().Dy()) / float64(img.Bounds().Dx())
 	resizedHeight := uint(float64(width) * ratio * fontRatio)
-	resizedWidth := uint(width)
-	return resize.Resize(resizedWidth, resizedHeight, img, resize.Lanczos3)
+	return resize.Resize(width, resizedHeight, img, resize.Lanczos3)
 }
 
-// ToAscii converts an image to ASCII characters
-func (conv *convert) ToAscii(img image.Image) string {
+func (c *convert) toAscii(img image.Image) string {
 	bounds := img.Bounds()
 	out := make([]string, bounds.Dy())
 
+	c.wg.Add(bounds.Dy())
 	for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
-		conv.Wg.Add(1)
 		go func(y int) {
-			defer conv.Wg.Done()
-
-			var str string
-			for x := bounds.Min.X; x < bounds.Max.X; x++ {
-				c := img.At(x, y)
-				grayColor := color.GrayModel.Convert(c).(color.Gray)
-				asciiIndex := int(grayColor.Y) * (len(asciiChars) - 1) / 255
-				char := string(asciiChars[asciiIndex])
-
-				if conv.Color {
-					r, g, b, _ := c.RGBA()
-					hexColor := fmt.Sprintf("#%02X%02X%02X", r>>8, g>>8, b>>8)
-					char = fmt.Sprintf("<x-char style=\"color:%s\">%s</x-char>", hexColor, char)
-					// char = fmt.Sprintf("%s%s<", hexColor, char)
-				} else {
-					hexColor := "#FFFFFF"
-					char = fmt.Sprintf("<x-char style=\"color:%s\">%s</x-char>", hexColor, char)
-				}
-				str += char
-			}
-			// conv.Mx.Lock()
-			out[y] = str
-			// conv.Mx.Unlock()
+			defer c.wg.Done()
+			c.processRow(img, y, bounds, &out[y])
 		}(y)
 	}
-	conv.Wg.Wait()
+	c.wg.Wait()
 
 	return strings.Join(out, "\n")
 }
 
-// Convert ASCII art to an image
+func (c *convert) processRow(img image.Image, y int, bounds image.Rectangle, outRow *string) {
+	var row strings.Builder
+	for x := bounds.Min.X; x < bounds.Max.X; x++ {
+		col := img.At(x, y)
+		grayColor := color.GrayModel.Convert(col).(color.Gray)
+		asciiIndex := int(grayColor.Y) * (len(asciiChars) - 1) / 255
+		char := string(asciiChars[asciiIndex])
+
+		if c.preserveColor {
+			r, g, b, _ := col.RGBA()
+			hexColor := fmt.Sprintf("#%02X%02X%02X", r>>8, g>>8, b>>8)
+			char = fmt.Sprintf("<x-char style=\"color:%s\">%s</x-char>", hexColor, char)
+		} else {
+			char = fmt.Sprintf("<x-char style=\"color:#FFFFFF\">%s</x-char>", char)
+		}
+		row.WriteString(char)
+	}
+	*outRow = row.String()
+}
+
+// ConvertAsciiToImage converts ASCII art to an image
 func ConvertAsciiToImage(asciiArt string, outputPath string, preserveColor bool) error {
 	lines := strings.Split(strings.TrimSpace(asciiArt), "\n")
+	imgWidth, imgHeight := calculateImageDimensions(lines)
 
-	// Calculate the dimensions of the image
+	img := createImage(imgWidth, imgHeight)
+	if err := drawAsciiOnImage(img, lines, preserveColor); err != nil {
+		return fmt.Errorf("failed to draw ASCII on image: %w", err)
+	}
+
+	if err := saveImage(img, outputPath); err != nil {
+		return fmt.Errorf("failed to save image: %w", err)
+	}
+
+	return nil
+}
+
+func calculateImageDimensions(lines []string) (int, int) {
 	maxLineLength := 0
 	for _, line := range lines {
 		if len(line) > maxLineLength {
 			maxLineLength = len(line)
 		}
 	}
-
-	imgWidth := fontWidth * maxLineLength
-	imgHeight := fontHeight * len(lines)
-
-	// Create a new RGBA image
-	img := image.NewRGBA(image.Rect(0, 0, imgWidth, imgHeight))
-
-	// Fill the image with a black background
-	black := color.RGBA{0, 0, 0, 255}
-	draw.Draw(img, img.Bounds(), &image.Uniform{black}, image.Point{}, draw.Src)
-
-	// Draw the ASCII text onto the image
-	for y, line := range lines {
-		subline := strings.Split(line, "<x-char")
-		t := 0
-		for _, tagged := range subline[1:] {
-			tagged = "<x-char" + tagged
-			textColor := parseColor(tagged)
-
-			symbol := string(tagged[len(tagged)-9])
-			drawChar(img, textColor, t*fontWidth, (y+1)*fontHeight, symbol)
-			t += 1
-		}
-		// for x, ch := range line {
-		// 	var textColor color.RGBA
-		// 	if preserveColor {
-		// 		textColor = parseColor(x, y, lines)
-		// 	} else {
-		// 		textColor = color.RGBA{255, 255, 255, 255} // White text for non-colored output
-		// 	}
-		// 	drawChar(img, textColor, x*fontWidth, (y+1)*fontHeight, string(ch))
-		// }
-	}
-
-	// Save the image as PNG
-	outFile, err := os.Create(outputPath)
-	if err != nil {
-		return err
-	}
-	defer outFile.Close()
-
-	return png.Encode(outFile, img)
+	return fontWidth * maxLineLength, fontHeight * len(lines)
 }
 
-func parseColor(line string) color.RGBA {
-	fmt.Println(line)
-	// Parse the hex color
-	clr := line[14:22]
-	fmt.Println(clr)
-	colorValue, err := strconv.ParseUint(clr, 16, 32)
+func createImage(width, height int) *image.RGBA {
+	img := image.NewRGBA(image.Rect(0, 0, width, height))
+	black := color.RGBA{0, 0, 0, 255}
+	draw.Draw(img, img.Bounds(), &image.Uniform{black}, image.Point{}, draw.Src)
+	return img
+}
+
+func drawAsciiOnImage(img *image.RGBA, lines []string, preserveColor bool) error {
+	for y, line := range lines {
+		sublines := strings.Split(line, "<x-char")
+		for x, tagged := range sublines[1:] {
+			tagged = "<x-char" + tagged
+			var textColor color.RGBA
+			var err error
+			if preserveColor {
+				textColor, err = parseColor(tagged)
+				if err != nil {
+					return fmt.Errorf("failed to parse color: %w", err)
+				}
+			} else {
+				textColor = color.RGBA{255, 255, 255, 255} // White color if not preserving color
+			}
+
+			symbol := string(tagged[len(tagged)-9])
+			drawChar(img, textColor, x*fontWidth, (y+1)*fontHeight, symbol)
+		}
+	}
+	return nil
+}
+
+func parseColor(line string) (color.RGBA, error) {
+	re := regexp.MustCompile(`color:(#[0-9A-Fa-f]{6})`)
+	match := re.FindStringSubmatch(line)
+	if len(match) < 2 {
+		return color.RGBA{255, 255, 255, 255}, nil
+	}
+
+	colorValue, err := strconv.ParseUint(match[1][1:], 16, 32)
 	if err != nil {
-		return color.RGBA{255, 255, 255, 255} // Default to white if parsing fails
+		return color.RGBA{}, fmt.Errorf("invalid color format: %w", err)
 	}
 
 	return color.RGBA{
@@ -206,10 +205,9 @@ func parseColor(line string) color.RGBA {
 		G: uint8((colorValue >> 8) & 0xFF),
 		B: uint8(colorValue & 0xFF),
 		A: 255,
-	}
+	}, nil
 }
 
-// Draws a character on the image at the specified position
 func drawChar(img *image.RGBA, col color.Color, x, y int, s string) {
 	point := fixed.Point26_6{X: fixed.I(x), Y: fixed.I(y)}
 	d := &font.Drawer{
@@ -219,4 +217,18 @@ func drawChar(img *image.RGBA, col color.Color, x, y int, s string) {
 		Dot:  point,
 	}
 	d.DrawString(s)
+}
+
+func saveImage(img *image.RGBA, outputPath string) error {
+	outFile, err := os.Create(outputPath)
+	if err != nil {
+		return fmt.Errorf("failed to create output file: %w", err)
+	}
+	defer outFile.Close()
+
+	if err := png.Encode(outFile, img); err != nil {
+		return fmt.Errorf("failed to encode image: %w", err)
+	}
+
+	return nil
 }

@@ -1,0 +1,21 @@
+### Variables
+@baseUrl = http://localhost:8080
+
+### Test the home page
+GET {{baseUrl}}/
+Accept: text/html
+
+### Convert image to ASCII art
+POST {{baseUrl}}/convert-to-ascii
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="image"; filename="test.jpg"
+Content-Type: image/jpeg
+
+< ./test.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="preserve_color"
+
+on
+------WebKitFormBoundary7MA4YWxkTrZu0gW--

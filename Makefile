@@ -6,24 +6,24 @@ FRONTEND_DIR=./frontend
 FRONTEND_BUILD_DIR=$(FRONTEND_DIR)/dist
 
 all:
-	./build.sh
+	@./build.sh
 
 run:
-	./build.sh
+	@./build.sh
 	@echo "Running the project..."
-	$(BUILD_DIR)/$(BINARY_NAME)
+	@$(BUILD_DIR)/$(BINARY_NAME)
 
 clean:
 	@echo "Cleaning build directory..."
-	rm -rf $(BUILD_DIR)
-	rm -rf $(FRONTEND_BUILD_DIR)
+	@rm -rf $(BUILD_DIR)
+	@rm -rf $(FRONTEND_BUILD_DIR)
 
 fmt:
 	@echo "Formatting Go code..."
-	go fmt ./...
+	@go fmt ./...
 
 deps:
 	@echo "Updating dependencies..."
-	go mod tidy
+	@go mod tidy
 
 .PHONY: all run clean fmt deps
