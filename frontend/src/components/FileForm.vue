@@ -11,7 +11,8 @@ const decodeUnicode = (input: string) => {
     return input
         .replace(/\\u003c/g, '<')
         .replace(/\\u003e/g, '>')
-        .replace(/\\u0026/g, '&');
+        .replace(/\\u0026/g, '&')
+        .replace(/\\"/g, '"');
 }
 
 const handleFileUpload = (event: Event) => {
@@ -75,7 +76,7 @@ const generateAscii = async () => {
     </div>
 
     <div class="flex items-center mb-6">
-        <input type="checkbox" disabled id="preserve-colors" v-model="preserveColors" class="mr-2" />
+        <input type="checkbox" id="preserve-colors" v-model="preserveColors" class="mr-2" />
         <label for="preserve-colors" class="text-orange-500 font-bold">Preserve original colors</label>
     </div>
 
@@ -90,7 +91,7 @@ const generateAscii = async () => {
         </button>
     </div>
 
-    <div class="rounded bg-white dark:bg-black border border-orange-300 dark:border-orange-700 p-4 flex items-center justify-center">
-        <pre class="w-auto whitespace-pre-wrap text-[2px] bg-black text-white font-bold tracking-widest" v-html="output"></pre>
+    <div class="rounded bg-white dark:bg-black border border-orange-300 dark:border-orange-700 p-4 flex items-center justify-center overflow-scroll sm:overflow-auto">
+        <pre class="w-auto whitespace-pre-wrap text-[1px] md:text-[2px] bg-black text-white font-bold tracking-widest" v-html="output"></pre>
     </div>
 </template>
