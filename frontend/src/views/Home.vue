@@ -8,7 +8,14 @@ import FileForm from '../components/FileForm.vue';
         <p class="mb-2">But they'll be coming back soon:</p>
         <ul class="list-disc list-inside">
             <li>Downloading images.</li>
-            <li>Preserving the colours.</li>
+        </ul>
+    </Callout>
+    <Callout title="THERE'S MORE COMING:">
+        <p class="mb-2">I'm working on more features, like:</p>
+        <ul class="list-disc list-inside">
+            <li>A progress bar.</li>
+            <li>Better peformance.</li>
+            <li>Custom characters.</li>
         </ul>
     </Callout>
 
