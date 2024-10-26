@@ -5,9 +5,9 @@
 </script>
 
 <div
-    class="min-h-screen transition-colors duration-200 bg-[#FFDAB9] dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+    class="min-h-screen p-8 bg-orange-100 dark:bg-black text-gray-800 dark:text-orange-200"
 >
-    <div class="container mx-auto px-4 py-8">
+    <div class="max-w-4xl mx-auto">
         <Header />
         <Main />
         <Footer />

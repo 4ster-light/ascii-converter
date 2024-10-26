@@ -1,5 +1,5 @@
 {
-  description = "Nix flake to build and run a project using a Makefile";
+  description = "Artscii nix flake";
 
   inputs.nixpkgs.url = "nixpkgs/nixos-unstable";
   inputs.flake-utils.url = "github:numtide/flake-utils";

@@ -2,7 +2,7 @@
     import { Moon, Sun } from "lucide-svelte";
     import { onMount } from "svelte";
 
-    export let darkMode = false;
+    let darkMode = $state(false);
 
     onMount(() => {
         darkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -16,8 +16,8 @@
 </script>
 
 <button
-    class="p-2 rounded-lg hover:bg-orange-200 dark:hover:bg-gray-700 transition-colors"
-    on:click={toggleTheme}
+    class="p-2 rounded-full bg-orange-400 dark:bg-gray-800 text-black dark:text-orange-400"
+    onclick={toggleTheme}
     aria-label="Toggle theme"
 >
     {#if darkMode}
