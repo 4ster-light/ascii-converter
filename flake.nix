@@ -12,14 +12,12 @@
         devShell = pkgs.mkShell {
           name = "ascii-converter-dev";
 
-          # Make sure the required dependencies are installed in the shell
           buildInputs = [
             pkgs.bun
             pkgs.go_1_23
-            pkgs.gnumake  # Corrected to gnumake
+            pkgs.gnumake
           ];
 
-          # Optionally change directories automatically
           shellHook = ''
             echo "Nix shell ready. You can now use 'make build', 'make run', etc."
           '';
