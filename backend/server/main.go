@@ -17,12 +17,10 @@ import (
 func main() {
 	router := chi.NewRouter()
 
-	// Middlewares
 	router.Use(middleware.Logger)
 	router.Use(middleware.Recoverer)
 	router.Use(cors.AllowAll().Handler)
 
-	// Routes
 	router.Get("/", handlers.HomeHandler)
 	router.Post("/convert-to-ascii", handlers.ConvertToImageHandler)
 	router.Post("/convert-to-image", handlers.ConvertAsciiToImageHandler)
