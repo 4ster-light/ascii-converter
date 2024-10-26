@@ -1,99 +1,121 @@
 <script lang="ts">
-    import Button from "./Button.svelte";
-    import { createEventDispatcher } from "svelte";
     import { Upload } from "lucide-svelte";
 
-    let preserveColors = false;
-    let selectedFile: File | null = null;
-    let asciiResult = "";
+    let { fileName, preserveColors, output, file } = $state({
+        fileName: "",
+        preserveColors: false,
+        output: "",
+        file: null as File | null
+    });
 
-    const dispatch = createEventDispatcher<{ fileSelect: File }>();
-    let fileInput: HTMLInputElement;
+    function decodeUnicode(input: string) {
+        return input
+            .replace(/\\u003c/g, "<")
+            .replace(/\\u003e/g, ">")
+            .replace(/\\u0026/g, "&")
+            .replace(/\\"/g, '"');
+    }
 
-    function handleFileChange(event: Event) {
-        const target = event.target as HTMLInputElement;
-        if (target.files && target.files[0]) {
-            dispatch("fileSelect", target.files[0]);
+    function handleFileUpload(event: Event) {
+        const uploadedFile = (event.target as HTMLInputElement).files?.[0];
+        if (uploadedFile) {
+            file = uploadedFile;
+            fileName = uploadedFile.name;
         }
     }
 
-    async function handleFileSelect(event: CustomEvent<File>) {
-        selectedFile = event.detail;
-    }
-
     function clearImage() {
-        selectedFile = null;
-        asciiResult = "";
+        fileName = "";
+        file = null;
+        output = "";
     }
 
     async function generateAscii() {
-        if (!selectedFile) return;
+        if (!file) {
+            alert("Please select an image first");
+            return;
+        }
 
         const formData = new FormData();
-        formData.append("file", selectedFile);
-        formData.append("preserveColors", preserveColors.toString());
+        formData.append("image", file);
+        formData.append("preserve_color", preserveColors ? "on" : "off");
 
         try {
-            const response = await fetch("/api/convert", {
+            const response = await fetch("/convert-to-ascii", {
                 method: "POST",
                 body: formData,
             });
 
-            if (!response.ok) throw new Error("Conversion failed");
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
 
-            const result = await response.json();
-            asciiResult = result.result;
+            output = decodeUnicode(await response.text());
         } catch (error) {
+            for (let [key, value] of formData.entries()) {
+                console.log(key, value);
+            }
             console.error("Error:", error);
+            alert("An error occurred while generating ASCII art");
         }
     }
 </script>
 
-<div class="relative">
-    <input
-        type="file"
-        bind:this={fileInput}
-        on:change={handleFileChange}
-        accept="image/*"
-        class="hidden"
-    />
-    <button
-        class="w-full px-4 py-2 border-2 border-dashed border-orange-300 dark:border-gray-600 rounded-lg
-               hover:border-orange-400 dark:hover:border-gray-500 transition-colors flex items-center justify-center gap-2"
-        on:click={() => fileInput.click()}
-    >
-        <Upload class="w-5 h-5" />
-        <span>Select Image</span>
-    </button>
-
-    <div class="flex items-center gap-2 my-4">
-        <input
-            type="checkbox"
-            id="preserveColors"
-            bind:checked={preserveColors}
-            class="w-4 h-4 text-orange-600"
-        />
+<div class="mb-6">
+    <label class="block font-bold mb-2 text-orange-500" for="file-upload">
+        Choose file
+    </label>
+    <div class="flex items-center">
         <label
-            for="preserveColors"
-            class="text-gray-700 dark:text-gray-300"
+            for="file-upload"
+            class="cursor-pointer font-bold py-2 px-4 rounded inline-flex items-center bg-orange-500 dark:bg-orange-500 text-white dark:text-black hover:bg-orange-400 dark:hover:bg-orange-600"
         >
-            Preserve original colors
+            <Upload class="mr-2" />
+            <span>Select Image</span>
         </label>
+        <input
+            id="file-upload"
+            type="file"
+            accept="image/*"
+            class="hidden"
+            onchange={handleFileUpload}
+        />
+        <span class="ml-3 font-bold">{fileName || "No file chosen"}</span>
     </div>
+</div>
 
-    <div class="flex gap-4 mt-4">
-        <Button variant="secondary" on:click={clearImage}
-            >Clear Image</Button
-        >
-        <Button variant="primary" on:click={generateAscii}
-            >Generate ASCII</Button
-        >
-    </div>
+<div class="flex items-center mb-6">
+    <input
+        type="checkbox"
+        id="preserve-colors"
+        bind:checked={preserveColors}
+        class="mr-2"
+    />
+    <label for="preserve-colors" class="text-orange-500 font-bold">
+        Preserve original colors
+    </label>
+</div>
 
-    {#if asciiResult}
-        <pre
-            class="mt-6 p-4 bg-gray-100 dark:bg-gray-700 rounded overflow-x-auto">
-            {asciiResult}
-        </pre>
-    {/if}
+<div class="flex space-x-4 mb-8">
+    <button
+        onclick={clearImage}
+        class="font-bold py-2 px-4 rounded bg-orange-300 dark:bg-gray-800 text-gray-800 dark:text-orange-400 hover:bg-orange-400 dark:hover:bg-gray-700"
+    >
+        Clear Image
+    </button>
+    <button
+        onclick={generateAscii}
+        class="font-bold py-2 px-4 rounded bg-orange-500 dark:bg-orange-500 text-white dark:text-black hover:bg-orange-400 dark:hover:bg-orange-600"
+    >
+        Generate ASCII
+    </button>
+</div>
+
+<div
+    class="rounded bg-white dark:bg-black border border-orange-300 dark:border-orange-700 p-4 flex items-center justify-center overflow-scroll sm:overflow-auto"
+>
+    <pre
+        class="w-auto whitespace-pre-wrap text-[1px] md:text-[2px] bg-black text-white font-bold tracking-widest">
+        {@html output}
+    </pre>
 </div>

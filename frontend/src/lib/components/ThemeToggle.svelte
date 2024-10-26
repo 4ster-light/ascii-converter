@@ -9,7 +9,7 @@
         document.documentElement.classList.toggle("dark", darkMode);
     });
 
-    function toggleTheme() {
+    const toggleTheme = () => {
         darkMode = !darkMode;
         document.documentElement.classList.toggle("dark", darkMode);
     }

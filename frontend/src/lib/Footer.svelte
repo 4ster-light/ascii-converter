@@ -2,20 +2,20 @@
     import { Github, Globe, Twitter } from "lucide-svelte";
 </script>
 
-<footer class="mt-8 text-center text-gray-600 dark:text-gray-400">
-    <p>Made by David Vivar Bogónez, aka: Aster</p>
-    <div class="flex justify-center gap-4 mt-2">
-        <a href="https://x.com/4ster_light" class="hover:text-orange-500">
+<footer class="mt-8 text-center">
+    <p class="mb-4">Made by David Vivar Bogónez, aka: Aster</p>
+    <div class="flex justify-center space-x-4">
+        <a href="https://x.com/4ster_light" class="text-orange-500 hover:text-orange-600">
             <span class="sr-only">Twitter</span>
-            <Twitter class="w-5 h-5" />
+            <Twitter />
         </a>
-        <a href="https://github.com/4ster-light" class="hover:text-orange-500">
+        <a href="https://github.com/4ster-light" class="text-orange-500 hover:text-orange-600">
             <span class="sr-only">GitHub</span>
-            <Github class="w-5 h-5" />
+            <Github />
         </a>
-        <a href="/" class="hover:text-orange-500">
+        <a href="/" class="text-orange-500 hover:text-orange-600">
             <span class="sr-only">Website</span>
-            <Globe class="w-5 h-5" />
+            <Globe />
         </a>
     </div>
 </footer>
