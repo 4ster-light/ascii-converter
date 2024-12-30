@@ -2,14 +2,19 @@
   "name": "artscii",
   "version": "1.0.50",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "bun run --watch src/index.ts"
   },
   "dependencies": {
+    "@elysiajs/html": "latest",
+    "@elysiajs/static": "latest",
+    "@elysiajs/swagger": "latest",
+    "@gtramontina.com/elysia-tailwind": "2.0.0",
     "elysia": "latest"
   },
   "devDependencies": {
-    "bun-types": "latest"
+    "bun-types": "latest",
+    "daisyui": "^4.12.23",
+    "tailwindcss": "^3.4.17"
   },
   "module": "src/index.js"
 }
