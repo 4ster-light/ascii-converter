@@ -1,10 +1,6 @@
 import type React from "react";
 
-interface AsciiPreviewProps {
-	ascii: string;
-}
-
-export const AsciiPreview: React.FC<AsciiPreviewProps> = ({ ascii }) => {
+export function AsciiPreview({ ascii }: { ascii: string }): React.JSX.Element {
 	return (
 		<div className="card bg-base-300 duration-200">
 			<div className="card-body p-4">
@@ -31,4 +27,4 @@ export const AsciiPreview: React.FC<AsciiPreviewProps> = ({ ascii }) => {
 			</div>
 		</div>
 	);
-};
+}

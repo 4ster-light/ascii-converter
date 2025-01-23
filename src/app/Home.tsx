@@ -1,32 +1,30 @@
 import type React from "react";
 import { Layout } from "./Layout";
-import { Card, type CardProps } from "./components/Card";
+import { Card } from "./components/Card";
 import { Form } from "./components/Form";
 
-export const Home: React.FC = () => {
-	const cards: CardProps[] = [
-		{
-			title: "SOME FEATURES ARE MISSING",
-			description: "But they'll be coming back soon:",
-			items: ["Downloading images."],
-		},
-		{
-			title: "THERE'S MORE COMING",
-			description: "I'm working on more features, like:",
-			items: [
-				"A progress bar.",
-				"Better peformance.",
-				"Custom characters.",
-				"AND SUPPORT FOR VIDEOS.",
-			],
-		},
-	];
-
+export function Home(): React.JSX.Element {
 	return (
 		<Layout>
 			<div>
 				<section>
-					{cards.map((card) => (
+					{[
+						{
+							title: "SOME FEATURES ARE MISSING",
+							description: "But they'll be coming back soon:",
+							items: ["Downloading images."],
+						},
+						{
+							title: "THERE'S MORE COMING",
+							description: "I'm working on more features, like:",
+							items: [
+								"A progress bar.",
+								"Better peformance.",
+								"Custom characters.",
+								"AND SUPPORT FOR VIDEOS.",
+							],
+						},
+					].map((card) => (
 						<Card key={card.title} {...card} />
 					))}
 				</section>
@@ -48,4 +46,4 @@ export const Home: React.FC = () => {
 			</div>
 		</Layout>
 	);
-};
+}

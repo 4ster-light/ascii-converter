@@ -4,7 +4,7 @@ import { AsciiPreview } from "../components/AsciiPreview";
 import type { AsciiConfig } from "../lib/data";
 import { useAsciiConverter } from "../lib/useAsciiConverter";
 
-export const Form: React.FC = () => {
+export function Form(): React.JSX.Element {
 	const [preserveColors, setPreserveColors] = useState(false);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -86,4 +86,4 @@ export const Form: React.FC = () => {
 			{result && <AsciiPreview ascii={result} />}
 		</form>
 	);
-};
+}

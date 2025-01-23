@@ -1,4 +1,3 @@
-// Card.tsx
 import type React from "react";
 
 export type CardProps = {
