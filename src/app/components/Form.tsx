@@ -1,8 +1,8 @@
 import type React from "react";
 import { useRef, useState } from "react";
-import { AsciiPreview } from "../components/AsciiPreview";
 import type { AsciiConfig } from "../lib/data";
 import { useAsciiConverter } from "../lib/useAsciiConverter";
+import { AsciiPreview } from "./AsciiPreview";
 
 export function Form(): React.JSX.Element {
 	const [preserveColors, setPreserveColors] = useState(false);

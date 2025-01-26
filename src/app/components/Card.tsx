@@ -6,7 +6,11 @@ export type CardProps = {
 	items: string[];
 };
 
-export const Card: React.FC<CardProps> = ({ title, description, items }) => {
+export function Card({
+	title,
+	description,
+	items,
+}: CardProps): React.JSX.Element {
 	return (
 		<div className="card bg-base-200 shadow-sm mb-6">
 			<div className="card-body">
@@ -22,4 +26,4 @@ export const Card: React.FC<CardProps> = ({ title, description, items }) => {
 			</div>
 		</div>
 	);
-};
+}

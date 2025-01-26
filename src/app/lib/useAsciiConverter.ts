@@ -8,17 +8,17 @@ import {
 	loadImage,
 } from "./utils";
 
-export const useAsciiConverter = (config: AsciiConfig = DEFAULT_CONFIG) => {
+export function useAsciiConverter(config: AsciiConfig = DEFAULT_CONFIG) {
 	const [result, setResult] = useState<string>("");
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const createAsciiArt = (
+	function createAsciiArt(
 		imageData: ImageData,
 		width: number,
 		height: number,
 		preserveColors: boolean,
-	): string => {
+	): string {
 		let ascii = "";
 
 		// Calculate step sizes for better performance
@@ -46,9 +46,9 @@ export const useAsciiConverter = (config: AsciiConfig = DEFAULT_CONFIG) => {
 		}
 
 		return ascii;
-	};
+	}
 
-	const sampleArea = (
+	function sampleArea(
 		imageData: ImageData,
 		startX: number,
 		startY: number,
@@ -56,7 +56,11 @@ export const useAsciiConverter = (config: AsciiConfig = DEFAULT_CONFIG) => {
 		heightStep: number,
 		totalWidth: number,
 		totalHeight: number,
-	) => {
+	): {
+		r: number;
+		g: number;
+		b: number;
+	} {
 		let totalR = 0;
 		let totalG = 0;
 		let totalB = 0;
@@ -77,9 +81,9 @@ export const useAsciiConverter = (config: AsciiConfig = DEFAULT_CONFIG) => {
 			g: totalG / sampleCount,
 			b: totalB / sampleCount,
 		};
-	};
+	}
 
-	const convertImageToAscii = async (file: File): Promise<void> => {
+	async function convertImageToAscii(file: File): Promise<void> {
 		setLoading(true);
 		setError(null);
 
@@ -108,7 +112,7 @@ export const useAsciiConverter = (config: AsciiConfig = DEFAULT_CONFIG) => {
 		} finally {
 			setLoading(false);
 		}
-	};
+	}
 
 	return {
 		result,
@@ -117,4 +121,4 @@ export const useAsciiConverter = (config: AsciiConfig = DEFAULT_CONFIG) => {
 		convertImageToAscii,
 		clearResult: () => setResult(""),
 	};
-};
+}
