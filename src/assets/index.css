@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.ascii-art {
+	font-family: "Space Mono", monospace;
+	filter: contrast(110%) brightness(120%);
+	transform: scale(1.05);
+	transform-origin: center;
+}
+
+@keyframes star-pulse {
+	0%,
+	100% {
+		opacity: 0.8;
+	}
+	50% {
+		opacity: 1;
+	}
+}
+
+.star {
+	animation: star-pulse 2s infinite;
+}

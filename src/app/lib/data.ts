@@ -2,6 +2,9 @@ export interface AsciiConfig {
 	preserveColors: boolean;
 	maxWidth: number;
 	maxHeight: number;
+	resolution: number;
+	charSet: string;
+	colorIntensity: number;
 }
 
 export interface ImageDimensions {
@@ -16,4 +19,7 @@ export const DEFAULT_CONFIG: AsciiConfig = {
 	preserveColors: false,
 	maxWidth: 800,
 	maxHeight: 600,
+	resolution: 5,
+	charSet: ASCII_CHARS,
+	colorIntensity: 5,
 };

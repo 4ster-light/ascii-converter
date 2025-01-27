@@ -2,38 +2,33 @@
 export default {
   content: ["./src/**/*.{js,jsx,ts,tsx}", "./index.html"],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        heading: ["Rubik", "sans-serif"],
+        mono: ["Space Mono", "monospace"],
+      },
+    },
   },
   plugins: [require("daisyui")],
   daisyui: {
-    themes: [
-      {
-        artscii: {
-          "primary": "#fb923c",           // orange-400 (vibrant orange)
-          "secondary": "#fdba74",         // orange-300 (soft secondary)
-          "accent": "#fff7ed",            // orange-50 (very soft accent)
-          "neutral": "#44403c",           // stone-700 (softer neutral)
-          "base-100": "#fff7ed",          // orange-50 (warm white)
-          "base-200": "#ffedd5",          // orange-100 (soft bg)
-          "base-300": "#fed7aa",          // orange-200 (deeper elements)
-          "base-content": "#292524",      // stone-800 (softer text)
-          "--rounded-box": "0.75rem",     // border radius
-          "--rounded-btn": "0.5rem",      // button radius
-        },
-        dark: {
-          "primary": "#fb923c",           // orange-400 (brighter for dark mode)
-          "secondary": "#ea580c",         // orange-600
-          "accent": "#3f3f46",            // zinc-700
-          "neutral": "#18181b",           // zinc-900
-          "base-100": "#27272a",          // zinc-800
-          "base-200": "#18181b",          // zinc-900
-          "base-300": "#3f3f46",          // zinc-700
-          "base-content": "#fafafa",      // zinc-50
-          "--rounded-box": "0.75rem",
-          "--rounded-btn": "0.5rem",
-        }
-      },
-    ],
+    themes: [{
+      mocha: {
+        "primary": "#89b4fa",       // Catppuccin Blue
+        "secondary": "#b4befe",     // Catppuccin Lavender
+        "accent": "#f5c2e7",        // Catppuccin Pink
+        "neutral": "#181825",       // Catppuccin Mantle
+        "base-100": "#1e1e2e",      // Catppuccin Base
+        "base-200": "#181825",      // Catppuccin Mantle
+        "base-300": "#313244",      // Catppuccin Surface0
+        "base-content": "#cdd6f4",  // Catppuccin Text
+        "info": "#89dceb",          // Catppuccin Sapphire
+        "success": "#a6e3a1",       // Catppuccin Green
+        "warning": "#f9e2af",       // Catppuccin Yellow
+        "error": "#f38ba8",         // Catppuccin Red
+        "--rounded-box": "1rem",
+        "--rounded-btn": "0.5rem",
+      }
+    }],
   },
   darkMode: "class"
 }

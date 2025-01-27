@@ -1,14 +1,22 @@
 import { useState } from "react";
-import { type AsciiConfig, DEFAULT_CONFIG } from "./data";
+import { ASCII_CHARS, type AsciiConfig } from "./data.ts";
 import {
 	calculateDimensions,
-	getAsciiChar,
 	getImageData,
 	getPixelBrightness,
 	loadImage,
 } from "./utils";
 
-export function useAsciiConverter(config: AsciiConfig = DEFAULT_CONFIG) {
+const DEFAULT_CONFIG: AsciiConfig = {
+	preserveColors: false,
+	maxWidth: 100,
+	maxHeight: 100,
+	resolution: 100,
+	charSet: ASCII_CHARS,
+	colorIntensity: 0,
+};
+
+export function useAsciiConverter(config: AsciiConfig) {
 	const [result, setResult] = useState<string>("");
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -17,69 +25,86 @@ export function useAsciiConverter(config: AsciiConfig = DEFAULT_CONFIG) {
 		imageData: ImageData,
 		width: number,
 		height: number,
-		preserveColors: boolean,
 	): string {
+		const { preserveColors, resolution, charSet, colorIntensity } = config;
+		const step = Math.max(1, Math.ceil((width * height) / (resolution * 1000)));
+		const chars = charSet;
+
 		let ascii = "";
+		const rgbCache = new Map<string, string>();
 
-		// Calculate step sizes for better performance
-		const widthStep = Math.max(1, Math.floor(width / 500));
-		const heightStep = Math.max(1, Math.floor(widthStep));
-
-		for (let y = 0; y < height; y += heightStep) {
+		for (let y = 0; y < height; y += step) {
 			let line = "";
-			for (let x = 0; x < width; x += widthStep) {
-				// Sample pixel colors using averaged area
-				const {
-					r: avgR,
-					g: avgG,
-					b: avgB,
-				} = sampleArea(imageData, x, y, widthStep, heightStep, width, height);
+			for (let x = 0; x < width; x += step) {
+				const { r, g, b } = samplePixelArea(
+					imageData,
+					x,
+					y,
+					step,
+					width,
+					height,
+				);
+				const brightness = getPixelBrightness(r, g, b);
+				const char = chars[Math.floor(brightness * (chars.length - 1))];
 
-				const brightness = getPixelBrightness(avgR, avgG, avgB);
-				const char = getAsciiChar(brightness);
-
-				line += preserveColors
-					? `<span style="color: rgb(${Math.round(avgR)},${Math.round(avgG)},${Math.round(avgB)})">${char}</span>`
-					: char;
+				if (preserveColors) {
+					const key = `${r},${g},${b}`;
+					if (!rgbCache.has(key)) {
+						const adjusted = adjustColorIntensity(r, g, b, colorIntensity);
+						rgbCache.set(key, `rgb(${adjusted.r},${adjusted.g},${adjusted.b})`);
+					}
+					line += `<span style="color:${rgbCache.get(key)}">${char}</span>`;
+				} else {
+					line += char;
+				}
 			}
-			ascii += `${line}\n`;
+			ascii += `${line}\r\n`;
 		}
-
 		return ascii;
 	}
 
-	function sampleArea(
+	function adjustColorIntensity(
+		r: number,
+		g: number,
+		b: number,
+		intensity: number,
+	) {
+		const factor = 1 + intensity / 10;
+		return {
+			r: Math.min(255, r * factor),
+			g: Math.min(255, g * factor),
+			b: Math.min(255, b * factor),
+		};
+	}
+
+	function samplePixelArea(
 		imageData: ImageData,
-		startX: number,
-		startY: number,
-		widthStep: number,
-		heightStep: number,
-		totalWidth: number,
-		totalHeight: number,
-	): {
-		r: number;
-		g: number;
-		b: number;
-	} {
+		x: number,
+		y: number,
+		step: number,
+		width: number,
+		height: number,
+	) {
+		// Improved sampling with weighted average
 		let totalR = 0;
 		let totalG = 0;
 		let totalB = 0;
-		let sampleCount = 0;
+		let count = 0;
 
-		for (let sy = 0; sy < heightStep && startY + sy < totalHeight; sy++) {
-			for (let sx = 0; sx < widthStep && startX + sx < totalWidth; sx++) {
-				const i = ((startY + sy) * totalWidth + (startX + sx)) * 4;
-				totalR += imageData.data[i];
-				totalG += imageData.data[i + 1];
-				totalB += imageData.data[i + 2];
-				sampleCount++;
+		for (let dy = 0; dy < step && y + dy < height; dy++) {
+			for (let dx = 0; dx < step && x + dx < width; dx++) {
+				const idx = ((y + dy) * width + (x + dx)) * 4;
+				totalR += imageData.data[idx];
+				totalG += imageData.data[idx + 1];
+				totalB += imageData.data[idx + 2];
+				count++;
 			}
 		}
 
 		return {
-			r: totalR / sampleCount,
-			g: totalG / sampleCount,
-			b: totalB / sampleCount,
+			r: Math.round(totalR / count),
+			g: Math.round(totalG / count),
+			b: Math.round(totalB / count),
 		};
 	}
 
@@ -103,7 +128,7 @@ export function useAsciiConverter(config: AsciiConfig = DEFAULT_CONFIG) {
 				imageData,
 				width,
 				height,
-				config.preserveColors,
+				// config.preserveColors,
 			);
 
 			setResult(ascii);

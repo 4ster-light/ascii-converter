@@ -1,29 +1,12 @@
-import type React from "react";
+import type { ReactElement } from "react";
 
-export function AsciiPreview({ ascii }: { ascii: string }): React.JSX.Element {
+export function AsciiPreview({ ascii }: { ascii: string }): ReactElement {
 	return (
-		<div className="card bg-base-300 duration-200">
+		<div className="card bg-base-200 overflow-x-auto">
 			<div className="card-body p-4">
-				<div className="flex justify-center">
-					<pre
-						className="font-mono text-xs md:text-sm lg:text-base whitespace-pre text-base-content"
-						style={{
-							lineHeight: "0.5",
-							letterSpacing: "0",
-							textAlign: "center",
-							fontFamily: 'Consolas, Monaco, "Courier New", monospace',
-							fontSize: "2px",
-							transform: "scale(1.2)",
-							transformOrigin: "center",
-							margin: "10px 0",
-							display: "inline-block",
-							maxWidth: "100%",
-							overflow: "hidden",
-						}}
-					>
-						{ascii}
-					</pre>
-				</div>
+				<pre className="ascii-art font-mono text-[6px] leading-[6px] sm:text-xs sm:leading-3 md:text-sm md:leading-4">
+					{ascii}
+				</pre>
 			</div>
 		</div>
 	);
