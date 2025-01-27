@@ -1,24 +1,23 @@
 import type { FormEvent, ReactElement } from "react";
 import { useRef, useState } from "react";
-import { ASCII_CHARS } from "../lib/data";
+import { ASCII_CHARS, CHAR_SET_OPTIONS } from "../lib/data";
 import { useAsciiConverter } from "../lib/useAsciiConverter";
 import { AsciiPreview } from "./AsciiPreview";
 
 export function Form(): ReactElement {
 	const fileInputRef = useRef<HTMLInputElement>(null);
-	const [config, setConfig] = useState({
+	const configRef = useRef({
 		preserveColors: false,
 		resolution: 5,
 		charSet: ASCII_CHARS,
 		colorIntensity: 5,
+		maxWidth: 120,
+		maxHeight: 80,
 	});
 
+	const [currentConfig, setCurrentConfig] = useState(configRef.current);
 	const { result, loading, error, convertImageToAscii, clearResult } =
-		useAsciiConverter({
-			...config,
-			maxWidth: 800,
-			maxHeight: 600,
-		});
+		useAsciiConverter(configRef.current);
 
 	function handleClear() {
 		clearResult();
@@ -33,6 +32,11 @@ export function Form(): ReactElement {
 		}
 		await convertImageToAscii(fileInputRef.current.files[0]);
 	}
+
+	const updateConfig = (updates: Partial<typeof configRef.current>) => {
+		configRef.current = { ...configRef.current, ...updates };
+		setCurrentConfig(configRef.current);
+	};
 
 	return (
 		<form onSubmit={handleSubmit} className="space-y-6">
@@ -49,19 +53,19 @@ export function Form(): ReactElement {
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 				<div className="form-control">
 					<label htmlFor="resolution-range" className="label">
-						<span className="label-text">Resolution</span>
+						<span className="label-text">Resolution (Detail Level)</span>
+						<span className="label-text-alt">
+							{currentConfig.resolution}/10
+						</span>
 					</label>
 					<input
 						id="resolution-range"
 						type="range"
 						min="1"
 						max="10"
-						value={config.resolution}
+						value={currentConfig.resolution}
 						onChange={(e) =>
-							setConfig((prev) => ({
-								...prev,
-								resolution: Number(e.target.value),
-							}))
+							updateConfig({ resolution: Number(e.target.value) })
 						}
 						className="range range-primary"
 					/>
@@ -73,16 +77,15 @@ export function Form(): ReactElement {
 					</label>
 					<select
 						id="char-set-select"
-						value={config.charSet}
-						onChange={(e) =>
-							setConfig((prev) => ({ ...prev, charSet: e.target.value }))
-						}
+						value={currentConfig.charSet}
+						onChange={(e) => updateConfig({ charSet: e.target.value })}
 						className="select select-primary bg-base-100"
 					>
-						<option value={ASCII_CHARS}>Default</option>
-						<option value="@%#*+=-:. ">Simple</option>
-						<option value="▓▒░ ">Block</option>
-						<option value="01">Binary</option>
+						{CHAR_SET_OPTIONS.map((opt) => (
+							<option key={opt.name} value={opt.value}>
+								{opt.name}
+							</option>
+						))}
 					</select>
 				</div>
 
@@ -90,12 +93,9 @@ export function Form(): ReactElement {
 					<label className="label cursor-pointer justify-start gap-2">
 						<input
 							type="checkbox"
-							checked={config.preserveColors}
+							checked={currentConfig.preserveColors}
 							onChange={(e) =>
-								setConfig((prev) => ({
-									...prev,
-									preserveColors: e.target.checked,
-								}))
+								updateConfig({ preserveColors: e.target.checked })
 							}
 							className="checkbox checkbox-primary checkbox-sm"
 						/>
@@ -103,22 +103,22 @@ export function Form(): ReactElement {
 					</label>
 				</div>
 
-				{config.preserveColors && (
+				{currentConfig.preserveColors && (
 					<div className="form-control">
 						<label htmlFor="intensity-range" className="label">
 							<span className="label-text">Color Intensity</span>
+							<span className="label-text-alt">
+								{currentConfig.colorIntensity}/10
+							</span>
 						</label>
 						<input
 							id="intensity-range"
 							type="range"
 							min="1"
 							max="10"
-							value={config.colorIntensity}
+							value={currentConfig.colorIntensity}
 							onChange={(e) =>
-								setConfig((prev) => ({
-									...prev,
-									colorIntensity: Number(e.target.value),
-								}))
+								updateConfig({ colorIntensity: Number(e.target.value) })
 							}
 							className="range range-primary"
 						/>
@@ -149,7 +149,13 @@ export function Form(): ReactElement {
 				</div>
 			)}
 
-			{result && <AsciiPreview ascii={result} />}
+			{result && (
+				<AsciiPreview
+					ascii={result}
+					config={currentConfig}
+					key={`${currentConfig.resolution}-${currentConfig.charSet}`}
+				/>
+			)}
 		</form>
 	);
 }

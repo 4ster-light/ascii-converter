@@ -15,20 +15,14 @@ export function calculateDimensions(
 	maxWidth: number,
 	maxHeight: number,
 ): ImageDimensions {
-	let width = imgWidth;
-	let height = imgHeight;
+	const widthRatio = maxWidth / imgWidth;
+	const heightRatio = maxHeight / imgHeight;
+	const ratio = Math.min(widthRatio, heightRatio);
 
-	if (width > maxWidth) {
-		height = Math.round((height * maxWidth) / width);
-		width = maxWidth;
-	}
-
-	if (height > maxHeight) {
-		width = Math.round((width * maxHeight) / height);
-		height = maxHeight;
-	}
-
-	return { width, height };
+	return {
+		width: Math.floor(imgWidth * ratio),
+		height: Math.floor(imgHeight * ratio),
+	};
 }
 
 export function loadImage(url: string): Promise<HTMLImageElement> {

@@ -1,20 +1,6 @@
 import { useState } from "react";
-import { ASCII_CHARS, type AsciiConfig } from "./data.ts";
-import {
-	calculateDimensions,
-	getImageData,
-	getPixelBrightness,
-	loadImage,
-} from "./utils";
-
-const DEFAULT_CONFIG: AsciiConfig = {
-	preserveColors: false,
-	maxWidth: 100,
-	maxHeight: 100,
-	resolution: 100,
-	charSet: ASCII_CHARS,
-	colorIntensity: 0,
-};
+import { type AsciiConfig, DEFAULT_CONFIG } from "./data.ts";
+import { calculateDimensions, getImageData, loadImage } from "./utils";
 
 export function useAsciiConverter(config: AsciiConfig) {
 	const [result, setResult] = useState<string>("");
@@ -27,7 +13,7 @@ export function useAsciiConverter(config: AsciiConfig) {
 		height: number,
 	): string {
 		const { preserveColors, resolution, charSet, colorIntensity } = config;
-		const step = Math.max(1, Math.ceil((width * height) / (resolution * 1000)));
+		const step = Math.max(1, Math.floor(15 / resolution)); // More balanced scaling
 		const chars = charSet;
 
 		let ascii = "";
@@ -36,16 +22,16 @@ export function useAsciiConverter(config: AsciiConfig) {
 		for (let y = 0; y < height; y += step) {
 			let line = "";
 			for (let x = 0; x < width; x += step) {
-				const { r, g, b } = samplePixelArea(
-					imageData,
-					x,
-					y,
-					step,
-					width,
-					height,
-				);
-				const brightness = getPixelBrightness(r, g, b);
-				const char = chars[Math.floor(brightness * (chars.length - 1))];
+				// Get single pixel instead of area average
+				const idx = (y * width + x) * 4;
+				const r = imageData.data[idx];
+				const g = imageData.data[idx + 1];
+				const b = imageData.data[idx + 2];
+
+				// Improved brightness calculation
+				const brightness = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+				const charIndex = Math.floor(brightness * (chars.length - 1));
+				const char = chars[charIndex] || " ";
 
 				if (preserveColors) {
 					const key = `${r},${g},${b}`;
@@ -58,7 +44,7 @@ export function useAsciiConverter(config: AsciiConfig) {
 					line += char;
 				}
 			}
-			ascii += `${line}\r\n`;
+			ascii += `${line}\n`;
 		}
 		return ascii;
 	}
@@ -74,37 +60,6 @@ export function useAsciiConverter(config: AsciiConfig) {
 			r: Math.min(255, r * factor),
 			g: Math.min(255, g * factor),
 			b: Math.min(255, b * factor),
-		};
-	}
-
-	function samplePixelArea(
-		imageData: ImageData,
-		x: number,
-		y: number,
-		step: number,
-		width: number,
-		height: number,
-	) {
-		// Improved sampling with weighted average
-		let totalR = 0;
-		let totalG = 0;
-		let totalB = 0;
-		let count = 0;
-
-		for (let dy = 0; dy < step && y + dy < height; dy++) {
-			for (let dx = 0; dx < step && x + dx < width; dx++) {
-				const idx = ((y + dy) * width + (x + dx)) * 4;
-				totalR += imageData.data[idx];
-				totalG += imageData.data[idx + 1];
-				totalB += imageData.data[idx + 2];
-				count++;
-			}
-		}
-
-		return {
-			r: Math.round(totalR / count),
-			g: Math.round(totalG / count),
-			b: Math.round(totalB / count),
 		};
 	}
 

@@ -1,34 +1,30 @@
 import type React from "react";
 import type { ReactElement } from "react";
-import { useState } from "react";
 
 export function Layout({
 	children,
 }: { children: React.ReactNode }): ReactElement {
-	const [stars] = useState(() =>
-		Array.from({ length: 50 }, () => ({
-			x: Math.random() * 100,
-			y: Math.random() * 100,
-			size: Math.random() * 4 + 2,
-			delay: Math.random() * 2,
-		})),
-	);
-
 	return (
 		<div className="min-h-screen bg-base-100 relative overflow-hidden">
 			{/* Animated star background */}
 			<div className="absolute inset-0 z-0">
-				{stars.map((star, i) => (
+				{Array.from({ length: 100 }, () => ({
+					x: Math.random() * 100,
+					y: Math.random() * 100,
+					size: Math.random() * 6 + 2,
+					delay: Math.random() * 3,
+					speed: Math.random() * 0.5 + 0.5,
+				})).map((star, i) => (
 					<div
 						key={i.toString()}
-						className="absolute bg-primary rounded-full star"
+						className="absolute bg-primary/50 rounded-full star drop-shadow-glow"
 						style={{
 							left: `${star.x}%`,
 							top: `${star.y}%`,
 							width: `${star.size}px`,
 							height: `${star.size}px`,
 							animationDelay: `${star.delay}s`,
-							animation: "star-pulse 2s infinite ease-in-out",
+							filter: `blur(${star.size / 3}px)`,
 						}}
 					/>
 				))}

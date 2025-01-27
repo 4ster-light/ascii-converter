@@ -1,12 +1,28 @@
 import type { ReactElement } from "react";
+import type { AsciiConfig } from "../lib/data.ts";
 
-export function AsciiPreview({ ascii }: { ascii: string }): ReactElement {
+export function AsciiPreview({
+	ascii,
+	config,
+}: {
+	ascii: string;
+	config: AsciiConfig;
+}): ReactElement {
 	return (
 		<div className="card bg-base-200 overflow-x-auto">
-			<div className="card-body p-4">
-				<pre className="ascii-art font-mono text-[6px] leading-[6px] sm:text-xs sm:leading-3 md:text-sm md:leading-4">
-					{ascii}
-				</pre>
+			<div className="card-body p-4 flex justify-center">
+				<pre
+					className="ascii-art font-mono whitespace-pre text-center mx-auto"
+					style={{
+						fontSize: `${Math.max(8, 16 - config.resolution)}px`, // Unified size
+						lineHeight: 1,
+						transform: `scale(${0.5 + config.resolution / 10})`,
+						transformOrigin: "center",
+						letterSpacing: "-0.1em",
+						wordSpacing: "-0.2em",
+					}}
+					dangerouslySetInnerHTML={{ __html: ascii }}
+				/>
 			</div>
 		</div>
 	);
