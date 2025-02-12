@@ -10,7 +10,7 @@ export function AsciiPreview({
 }): ReactElement {
 	return (
 		<div className="card bg-base-200 overflow-x-auto">
-			<div className="card-body p-4 flex justify-center">
+			<div className="bg-base-200 rounded-box overflow-x-auto p-4">
 				<pre
 					className="ascii-art font-mono whitespace-pre text-center mx-auto"
 					style={{

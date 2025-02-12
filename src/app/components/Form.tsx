@@ -46,7 +46,7 @@ export function Form(): ReactElement {
 					id="file-input"
 					type="file"
 					accept="image/*"
-					className="file-input file-input-bordered file-input-primary w-full bg-base-100"
+					className="w-full p-2 border-2 border-primary rounded-btn text-primary bg-base-100"
 				/>
 			</div>
 
@@ -79,7 +79,7 @@ export function Form(): ReactElement {
 						id="char-set-select"
 						value={currentConfig.charSet}
 						onChange={(e) => updateConfig({ charSet: e.target.value })}
-						className="select select-primary bg-base-100"
+						className="w-full p-2 border-2 border-primary rounded-btn bg-base-100"
 					>
 						{CHAR_SET_OPTIONS.map((opt) => (
 							<option key={opt.name} value={opt.value}>
@@ -130,13 +130,13 @@ export function Form(): ReactElement {
 				<button
 					type="button"
 					onClick={handleClear}
-					className="btn bg-base-100 border-primary text-primary hover:bg-primary/10 flex-1"
+					className="w-full p-2 border-2 border-primary rounded-btn text-primary hover:bg-primary/10"
 				>
 					Clear Image
 				</button>
 				<button
 					type="submit"
-					className="btn bg-primary border-primary text-base-100 hover:bg-primary/90 flex-1"
+					className="w-full p-2 border-2 border-primary rounded-btn bg-primary text-base-100 hover:bg-primary/90"
 					disabled={loading}
 				>
 					{loading ? "Converting..." : "Generate ASCII"}
